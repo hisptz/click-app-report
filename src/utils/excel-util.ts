@@ -16,6 +16,52 @@ export class ExcelUtil {
     this.fileUtil = new FileUtil(this.excelDir, this.excelFileName, "xlsx");
   }
 
+  async  writeToSingleSheetExcelFile(
+    jsonData:any,
+    skipHeader = false,
+    sheetName = this.defaultSheet
+  ) {
+    try {
+      const ws = xlsx.utils.json_to_sheet(jsonData, {
+        header: _.uniq(_.flattenDeep(_.map(jsonData, (data) => _.keys(data)))),
+        skipHeader,
+      });
+      let workbook = xlsx.utils.book_new();
+      xlsx.utils.book_append_sheet(workbook, ws, sheetName);
+      xlsx.writeFile(workbook, `${this.fileUtil.filePath}`);
+    } catch (error: any) {
+        await this.logsUtil.addLogs(
+          "error",
+          error.message || error,
+          "getJsonDataFromExcelOrCsvFile"
+        );
+      }
+  }
+  
+  async  writeToMultipleSheetExcelFile(
+    jsonDataObject :any,
+    skipHeader = false
+  ) {
+    try {
+      let workbook = xlsx.utils.book_new();
+      for (const sheetName of _.keys(jsonDataObject)) {
+        const jsonData = jsonDataObject[sheetName];
+        const ws = xlsx.utils.json_to_sheet(jsonData, {
+          header: _.uniq(_.flattenDeep(_.map(jsonData, (data) => _.keys(data)))),
+          skipHeader,
+        });
+        xlsx.utils.book_append_sheet(workbook, ws, sheetName);
+      }
+      xlsx.writeFile(workbook, `${this.fileUtil.filePath}`);
+    } catch (error: any) {
+        await this.logsUtil.addLogs(
+          "error",
+          error.message || error,
+          "getJsonDataFromExcelOrCsvFile"
+        );
+      }
+  }
+
   async getJsonDataFromExcelOrCsvFile() {
     let data: any = {};
     try {
