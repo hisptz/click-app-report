@@ -1,11 +1,17 @@
-import { FileUtil } from "./utils/file-util";
+import { LogsUtil } from "./utils/logs-util";
 
 starApp();
 
 async function starApp() {
-  const fileUtil = new FileUtil("resources/logs", "logs jose");
+  try {
+    const logsUtil = new LogsUtil();
+    await logsUtil.clearLogs();
+    await logsUtil.addLogs("info", "start an app", "app");
+    // @TODO adding logics for the app script
 
-  fileUtil.writeToFile({ id: "id" }, true);
-  const data = await fileUtil.readDataFromFile();
-  console.log(data);
+    await logsUtil.addLogs("info", "End of script", "app");
+  } catch (error: any) {
+    error = error.message || error;
+    console.log({ error });
+  }
 }
