@@ -3,25 +3,39 @@ import fs from "fs";
 import * as _ from "lodash";
 
 export class FileUtil {
-  fileDir: string;
-  filename: string;
-  constructor(outputDir: string, filename: string) {
-    this.fileDir = `resources/${outputDir}`;
-    this.filename = filename;
-    this.intiateFilesDirectories(this.fileDir);
+  private _fileDir: string;
+  private _filename: string;
+  private _extension: string;
+  constructor(outputDir: string, filename: string, extension: string = "txt") {
+    this._extension = extension;
+    this._fileDir = `resources/${outputDir}`;
+    this._filename = filename;
+    this.intiateFilesDirectories(this._fileDir);
+  }
+
+  get filePath(): string {
+    return `${this._fileDir}/${this.formattedFileName}`;
+  }
+
+  get fileName(): string {
+    return this._filename;
+  }
+
+  get fileDir(): string {
+    return this._fileDir;
   }
 
   get formattedFileName(): string {
-    return _.join(
+    return `${_.join(
       _.filter(
         _.join(
-          _.filter(this.filename.split("/"), (key) => key.trim() !== ""),
+          _.filter(this._filename.split("/"), (key) => key.trim() !== ""),
           "_"
         ).split(" "),
         (key) => key.trim() !== ""
       ),
       "_"
-    );
+    )}.${this._extension}`;
   }
 
   getFilesNamesUsingPath(path: string) {
@@ -49,7 +63,7 @@ export class FileUtil {
     return new Promise((resolve, reject) => {
       data = shouldStringify ? JSON.stringify(data) : data;
       fs.writeFile(
-        `${this.fileDir}/${this.formattedFileName}.txt`,
+        `${this._fileDir}/${this.formattedFileName}`,
         data,
         { flag },
         async (error) => {
@@ -67,7 +81,7 @@ export class FileUtil {
     let data: any = [];
     return new Promise((resolve) => {
       fs.readFile(
-        `${this.fileDir}/${this.formattedFileName}.txt`,
+        `${this._fileDir}/${this.formattedFileName}`,
         (error, response: any) => {
           if (error) {
             console.log(JSON.stringify({ error, type: "readDataFromFile" }));
