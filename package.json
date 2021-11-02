@@ -1,0 +1,38 @@
+{
+  "name": "click-up-report",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "build-app": "tsc",
+    "format": "prettier --write \"*.ts\"  \"*/*.ts\" \"*/*/*.ts\"  \"*.json\"",
+    "start": "ts-node ./src/index.ts",
+    "dev": "ts-node-dev --respawn ./src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/chingalo/click-app-report.git"
+  },
+  "author": "joseph chingalo",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/chingalo/click-app-report/issues"
+  },
+  "homepage": "https://github.com/chingalo/click-app-report#readme",
+  "devDependencies": {
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0",
+    "lodash": "^4.17.21",
+    "prettier": "^2.4.1"
+  }
+}
