@@ -1,34 +1,48 @@
-import shelljs from "shelljs";
-import fs from "fs";
-import * as _ from "lodash";
+import shelljs from 'shelljs';
+import fs from 'fs';
+import * as _ from 'lodash';
 
 export class FileUtil {
-  fileDir: string;
-  filename: string;
-  constructor(outputDir: string, filename: string) {
-    this.fileDir = `${outputDir}`;
-    this.filename = filename;
-    this.intiateFilesDirectories(this.fileDir);
+  private _fileDir: string;
+  private _filename: string;
+  private _extension: string;
+  constructor(outputDir: string, filename: string, extension: string = 'txt') {
+    this._extension = extension;
+    this._fileDir = `resources/${outputDir}`;
+    this._filename = filename;
+    this.intiateFilesDirectories(this._fileDir);
+  }
+
+  get filePath(): string {
+    return `${this._fileDir}/${this.formattedFileName}`;
+  }
+
+  get fileName(): string {
+    return this._filename;
+  }
+
+  get fileDir(): string {
+    return this._fileDir;
   }
 
   get formattedFileName(): string {
-    return _.join(
+    return `${_.join(
       _.filter(
         _.join(
-          _.filter(this.filename.split("/"), (key) => key.trim() !== ""),
-          "_"
-        ).split(" "),
-        (key) => key.trim() !== ""
+          _.filter(this._filename.split('/'), (key) => key.trim() !== ''),
+          '_'
+        ).split(' '),
+        (key) => key.trim() !== ''
       ),
-      "_"
-    );
+      '_'
+    )}.${this._extension}`;
   }
 
   getFilesNamesUsingPath(path: string) {
     const fileResponse = shelljs.ls(`${path}`);
     return _.flatMapDeep(
       _.map(
-        _.filter(fileResponse.stdout.split(`\n`), (name) => name !== ""),
+        _.filter(fileResponse.stdout.split(`\n`), (name) => name !== ''),
         (name: string) => name.trim()
       )
     );
@@ -36,7 +50,7 @@ export class FileUtil {
 
   intiateFilesDirectories(directories: any) {
     return new Promise((resolve, reject) => {
-      const response = shelljs.mkdir("-p", directories);
+      const response = shelljs.mkdir('-p', directories);
       if (response && !response.stderr) {
         resolve([]);
       } else {
@@ -45,16 +59,16 @@ export class FileUtil {
     });
   }
 
-  async writeToFile(data: any, shouldStringify = true, flag = "w") {
+  async writeToFile(data: any, shouldStringify = true, flag = 'w') {
     return new Promise((resolve, reject) => {
       data = shouldStringify ? JSON.stringify(data) : data;
       fs.writeFile(
-        `${this.fileDir}/${this.formattedFileName}.txt`,
+        `${this._fileDir}/${this.formattedFileName}`,
         data,
         { flag },
         async (error) => {
           if (error) {
-            console.log(JSON.stringify({ error, type: "writeToFile" }));
+            console.log(JSON.stringify({ error, type: 'writeToFile' }));
           } else {
             resolve([]);
           }
@@ -67,12 +81,16 @@ export class FileUtil {
     let data: any = [];
     return new Promise((resolve) => {
       fs.readFile(
-        `${this.fileDir}/${this.formattedFileName}.txt`,
+        `${this._fileDir}/${this.formattedFileName}`,
         (error, response: any) => {
           if (error) {
-            console.log(JSON.stringify({ error, type: "readDataFromFile" }));
+            console.log(JSON.stringify({ error, type: 'readDataFromFile' }));
           } else {
-            data = JSON.parse(response);
+            try {
+              data = JSON.parse(response);
+            } catch (error) {
+              data = response;
+            }
           }
           resolve(data);
         }
