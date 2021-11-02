@@ -2,9 +2,9 @@ import { FileUtil } from "./file-util";
 import moment from "moment";
 
 export class LogsUtil {
-  logsDir: string = "logs";
-  logsfileName: string;
-  fileUtil: FileUtil;
+  private logsDir: string = "logs";
+  private logsfileName: string;
+  private fileUtil: FileUtil;
 
   constructor(logsfileName: string = "logs") {
     this.logsfileName = logsfileName;
