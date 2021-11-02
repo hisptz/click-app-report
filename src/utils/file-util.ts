@@ -6,7 +6,7 @@ export class FileUtil {
   fileDir: string;
   filename: string;
   constructor(outputDir: string, filename: string) {
-    this.fileDir = `${outputDir}`;
+    this.fileDir = `resources/${outputDir}`;
     this.filename = filename;
     this.intiateFilesDirectories(this.fileDir);
   }
@@ -72,7 +72,11 @@ export class FileUtil {
           if (error) {
             console.log(JSON.stringify({ error, type: "readDataFromFile" }));
           } else {
-            data = JSON.parse(response);
+            try {
+              data = JSON.parse(response);
+            } catch (error) {
+              data = response;
+            }
           }
           resolve(data);
         }
