@@ -1,12 +1,12 @@
-import shelljs from "shelljs";
-import fs from "fs";
-import * as _ from "lodash";
+import shelljs from 'shelljs';
+import fs from 'fs';
+import * as _ from 'lodash';
 
 export class FileUtil {
   private _fileDir: string;
   private _filename: string;
   private _extension: string;
-  constructor(outputDir: string, filename: string, extension: string = "txt") {
+  constructor(outputDir: string, filename: string, extension: string = 'txt') {
     this._extension = extension;
     this._fileDir = `resources/${outputDir}`;
     this._filename = filename;
@@ -29,12 +29,12 @@ export class FileUtil {
     return `${_.join(
       _.filter(
         _.join(
-          _.filter(this._filename.split("/"), (key) => key.trim() !== ""),
-          "_"
-        ).split(" "),
-        (key) => key.trim() !== ""
+          _.filter(this._filename.split('/'), (key) => key.trim() !== ''),
+          '_'
+        ).split(' '),
+        (key) => key.trim() !== ''
       ),
-      "_"
+      '_'
     )}.${this._extension}`;
   }
 
@@ -42,7 +42,7 @@ export class FileUtil {
     const fileResponse = shelljs.ls(`${path}`);
     return _.flatMapDeep(
       _.map(
-        _.filter(fileResponse.stdout.split(`\n`), (name) => name !== ""),
+        _.filter(fileResponse.stdout.split(`\n`), (name) => name !== ''),
         (name: string) => name.trim()
       )
     );
@@ -50,7 +50,7 @@ export class FileUtil {
 
   intiateFilesDirectories(directories: any) {
     return new Promise((resolve, reject) => {
-      const response = shelljs.mkdir("-p", directories);
+      const response = shelljs.mkdir('-p', directories);
       if (response && !response.stderr) {
         resolve([]);
       } else {
@@ -59,7 +59,7 @@ export class FileUtil {
     });
   }
 
-  async writeToFile(data: any, shouldStringify = true, flag = "w") {
+  async writeToFile(data: any, shouldStringify = true, flag = 'w') {
     return new Promise((resolve, reject) => {
       data = shouldStringify ? JSON.stringify(data) : data;
       fs.writeFile(
@@ -68,7 +68,7 @@ export class FileUtil {
         { flag },
         async (error) => {
           if (error) {
-            console.log(JSON.stringify({ error, type: "writeToFile" }));
+            console.log(JSON.stringify({ error, type: 'writeToFile' }));
           } else {
             resolve([]);
           }
@@ -84,7 +84,7 @@ export class FileUtil {
         `${this._fileDir}/${this.formattedFileName}`,
         (error, response: any) => {
           if (error) {
-            console.log(JSON.stringify({ error, type: "readDataFromFile" }));
+            console.log(JSON.stringify({ error, type: 'readDataFromFile' }));
           } else {
             try {
               data = JSON.parse(response);

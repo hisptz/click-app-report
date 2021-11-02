@@ -1,18 +1,18 @@
-import { FileUtil } from "./file-util";
-import moment from "moment";
+import { FileUtil } from './file-util';
+import moment from 'moment';
 
 export class LogsUtil {
-  private logsDir: string = "logs";
+  private logsDir: string = 'logs';
   private logsfileName: string;
   private fileUtil: FileUtil;
 
-  constructor(logsfileName: string = "logs") {
+  constructor(logsfileName: string = 'logs') {
     this.logsfileName = logsfileName;
     this.fileUtil = new FileUtil(this.logsDir, this.logsfileName);
   }
 
   async clearLogs() {
-    const data = "";
+    const data = '';
     try {
       await this.fileUtil.writeToFile(data, false);
     } catch (error: any) {
@@ -21,10 +21,10 @@ export class LogsUtil {
     }
   }
 
-  async addLogs(type = "INFO", message: any, resource = "") {
-    const time = moment().format("YYYY-MM-DD hh:mm:ss.SSS A");
+  async addLogs(type = 'INFO', message: any, resource = '') {
+    const time = moment().format('YYYY-MM-DD hh:mm:ss.SSS A');
     const data = `${time} ${type.toUpperCase()}(${resource}) ${message}\n`;
-    const flag = "a+";
+    const flag = 'a+';
     try {
       await this.fileUtil.writeToFile(data, false, flag);
     } catch (error: any) {
