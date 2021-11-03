@@ -175,6 +175,42 @@ export class AppProcess {
   overallTaskByProjectSummary(): any {
     const summaryJson: any[] = [];
     try {
+      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
+      const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
+      for (const assignee of _.keys(tasksByAssignee).sort()) {
+        const assigneeClickUpReportUtil = new ClickUpReportUtil(
+          tasksByAssignee[assignee]
+        );
+        summaryJson.push(
+          { item1: `${assignee}` },
+          {
+            item1: 'Completeness',
+            item2: `${assigneeClickUpReportUtil.tasksCompletenesRate}%`
+          },
+          {
+            item1: 'Timeliness',
+            item2: `${assigneeClickUpReportUtil.tasksTimelinessRate}%`
+          },
+          { item1: '' },
+          { item1: 'Distribution by Status' },
+          {
+            item1: 'Open',
+            item2: 'In Progress',
+            item3: 'On review',
+            item4: 'Closed/Completed',
+            item5: 'Total'
+          },
+          {
+            item1: `${assigneeClickUpReportUtil.openTasksCount}`,
+            item2: `${assigneeClickUpReportUtil.inProgressStatusTasksCount}`,
+            item3: `${assigneeClickUpReportUtil.onReviewTasksCount}`,
+            item4: `${assigneeClickUpReportUtil.onCloseTasksCount}`,
+            item5: `${assigneeClickUpReportUtil.totalTasks}`
+          },
+          { item1: `` },
+          { item1: 'Distribution by Project/List Name' }
+        );
+      }
     } catch (error) {}
     return summaryJson;
   }
