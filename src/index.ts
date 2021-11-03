@@ -8,23 +8,13 @@ starApp();
 
 async function starApp() {
   try {
-    const appProcess =  new AppProcess();
-    console.log({appProcess})
+    const reportGeneratedDate = new Date('2021-11-01');
+    const appProcess = new AppProcess(reportGeneratedDate);
     const logsUtil = new LogsUtil();
     await logsUtil.clearLogs();
     await logsUtil.addLogs('info', 'start an app', 'app');
-  
-    // @TODO adding logics for the app script
-    // const excelUtil = new ExcelUtil('task_list');
-    // const data = await excelUtil.getJsonDataFromExcelOrCsvFile();
-    // for (var key of _.keys(data)) {
-    //   await new ExcelUtil(`task_list-${key}`).writeToSingleSheetExcelFile(
-    //     _.chunk(data[key], 10)[0]
-    //   );
-    // }
-    // await new ExcelUtil('task_list-new').writeToMultipleSheetExcelFile(data);
-
-    // await logsUtil.addLogs('info', 'End of script', 'app');
+    await appProcess.setAllTask();
+    await logsUtil.addLogs('info', 'End of script', 'app');
   } catch (error: any) {
     error = error.message || error;
     console.log({ error });
