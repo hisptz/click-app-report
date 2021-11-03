@@ -60,10 +60,12 @@ export class ClickUpReportUtil {
 
   get onCloseTasksCount(): number {
     let count = 0;
-    _.filter(this._task || [], (task: any) => {
-      const status = task[statusColumn] || '';
-      return status == closedStatus;
-    });
+    try {
+      count = _.filter(this._task || [], (task: any) => {
+        const status = task[statusColumn] || '';
+        return status === closedStatus;
+      }).length;
+    } catch (error) {}
     return count;
   }
 
