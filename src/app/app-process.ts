@@ -66,11 +66,6 @@ export class AppProcess {
         console.log('tasksTimelinessRate', assigneeTask.tasksTimelinessRate);
         console.log('tasksCompletenesRate', assigneeTask.tasksCompletenesRate);
       }
-
-      // get overall summary
-      // Overall
-      // per projects
-      // getting summary per individual
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
