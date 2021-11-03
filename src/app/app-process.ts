@@ -46,7 +46,26 @@ export class AppProcess {
       console.log('tasksTimelinessRate', summaryTask.tasksTimelinessRate);
       console.log('tasksCompletenesRate', summaryTask.tasksCompletenesRate);
       const tasksByAssignee = _.groupBy(this._tasks, assigneeColumn);
-      console.log(_.keys(tasksByAssignee));
+      for (const assignee of _.keys(tasksByAssignee)) {
+        console.log(`\n\nSummary for assignee ${assignee}`);
+        const assigneeTask = new ClickUpReportUtil(tasksByAssignee[assignee]);
+        console.log('totalTasks', assigneeTask.totalTasks);
+        console.log('openTasksCount', assigneeTask.openTasksCount);
+        console.log(
+          'inProgressStatusTasksCount',
+          assigneeTask.inProgressStatusTasksCount
+        );
+        console.log('onReviewTasksCount', assigneeTask.onReviewTasksCount);
+        console.log('onCloseTasksCount', assigneeTask.onCloseTasksCount);
+        console.log('totalTasks', assigneeTask.totalTasks);
+        console.log('tasksCompletedCount', assigneeTask.tasksCompletedCount);
+        console.log(
+          'tasksCompletedOnTimeCount',
+          assigneeTask.tasksCompletedOnTimeCount
+        );
+        console.log('tasksTimelinessRate', assigneeTask.tasksTimelinessRate);
+        console.log('tasksCompletenesRate', assigneeTask.tasksCompletenesRate);
+      }
 
       // get overall summary
       // Overall
