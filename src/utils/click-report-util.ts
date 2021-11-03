@@ -1,4 +1,12 @@
 import _ from 'lodash';
+import {
+  closedStatus,
+  inProgressStatus,
+  openStatus,
+  reviewStatus,
+  statusColumn,
+  taskClosedStatus
+} from '../constants/click-up-excel-file-constant';
 
 export class ClickUpReportUtil {
   private _task: any[];
@@ -8,44 +16,74 @@ export class ClickUpReportUtil {
   }
 
   get tasksCompletenesRate(): string {
-    let count = 1.4;
-    //@TODO impplement count
+    const count = (this.tasksCompletedCount / this.totalTasks) * 100;
     return count.toFixed(2);
   }
 
   get tasksTimelinessRate(): string {
-    let count = 1.4;
-    //@TODO impplement count
+    const count = (this.tasksCompletedOnTimeCount / this.totalTasks) * 100;
     return count.toFixed(2);
   }
 
-  get notStartedTasksCount(): number {
+  get openTasksCount(): number {
     let count = 0;
-    //@TODO impplement count
+    try {
+      count = _.filter(this._task || [], (task: any) => {
+        const status = task[statusColumn] || '';
+        return status === openStatus;
+      }).length;
+    } catch (error) {}
     return count;
   }
 
-  get onProgressTasksCount(): number {
+  get inProgressStatusTasksCount(): number {
     let count = 0;
-    //@TODO impplement count
+    try {
+      count = _.filter(this._task || [], (task: any) => {
+        const status = task[statusColumn] || '';
+        return status === inProgressStatus;
+      }).length;
+    } catch (error) {}
     return count;
   }
 
   get onReviewTasksCount(): number {
     let count = 0;
-    //@TODO impplement count
+    try {
+      count = _.filter(this._task || [], (task: any) => {
+        const status = task[statusColumn] || '';
+        return status === reviewStatus;
+      }).length;
+    } catch (error) {}
     return count;
   }
 
   get onCloseTasksCount(): number {
     let count = 0;
-    //@TODO impplement count
+    _.filter(this._task || [], (task: any) => {
+      const status = task[statusColumn] || '';
+      return status == closedStatus;
+    });
+    return count;
+  }
+
+  get tasksCompletedCount(): number {
+    let count = 0;
+    try {
+      count = _.filter(this._task || [], (task: any) => {
+        const status = task[statusColumn] || '';
+        return taskClosedStatus.includes(status);
+      }).length;
+    } catch (error) {}
     return count;
   }
 
   get tasksCompletedOnTimeCount(): number {
     let count = 0;
-    //@TODO impplement count
+    // _.filter(this._task || [], (task:any)=>{
+    //   const status = task[statusColumn] || "";
+    //   return taskClosedStatus.includes(status);
+    // })
     return count;
   }
 
