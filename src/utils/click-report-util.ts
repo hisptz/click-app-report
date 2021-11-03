@@ -22,6 +22,10 @@ export class ClickUpReportUtil {
     this._tasks = tasks;
   }
 
+  get sortedTasks(): any {
+    return _.sortBy(this._tasks, [assigneeColumn, taskListColum]);
+  }
+
   get tasksByAssignee(): any {
     return _.groupBy(this._tasks, assigneeColumn);
   }

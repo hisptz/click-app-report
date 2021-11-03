@@ -40,17 +40,19 @@ export class AppProcess {
       const projectSummary = this.overallTaskByProjectSummary();
       const individualSummary = this.overallTaskByAssignedSummary();
       const jsonDataObject = {
-        overallSummary,
-        individualSummary,
-        projectSummary
+        'Overall summary': overallSummary,
+        'Individual summary': individualSummary,
+        'Project summary': projectSummary
       };
       await new ExcelUtil(this._reportFile).writeToMultipleSheetExcelFile(
         jsonDataObject,
         true
       );
-      await new ExcelUtil(
-        this._clickUpReportFile
-      ).writeToMultipleSheetExcelFile(jsonDataObject, false);
+      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
+      await new ExcelUtil(this._clickUpReportFile).writeToSingleSheetExcelFile(
+        clickUpReportUtil.sortedTasks,
+        false
+      );
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
@@ -140,7 +142,6 @@ export class AppProcess {
             item1: 'Timeliness',
             item2: `${assigneeClickUpReportUtil.tasksTimelinessRate}%`
           },
-          { item1: '' },
           { item1: 'Distribution by Status' },
           {
             item1: 'Open',
@@ -156,7 +157,6 @@ export class AppProcess {
             item4: `${assigneeClickUpReportUtil.onCloseTasksCount}`,
             item5: `${assigneeClickUpReportUtil.totalTasks}`
           },
-          { item1: `` },
           { item1: 'Distribution by Project/List Name' }
         );
         const tasksByProjectList = assigneeClickUpReportUtil.tasksByProject;
@@ -194,7 +194,6 @@ export class AppProcess {
             item1: 'Timeliness',
             item2: `${projectClickUpReportUtil.tasksTimelinessRate}%`
           },
-          { item1: '' },
           { item1: 'Distribution by Status' },
           {
             item1: 'Open',
@@ -210,7 +209,6 @@ export class AppProcess {
             item4: `${projectClickUpReportUtil.onCloseTasksCount}`,
             item5: `${projectClickUpReportUtil.totalTasks}`
           },
-          { item1: `` },
           { item1: 'Distribution by Assignee and status' },
           {
             item1: 'Assignee',
