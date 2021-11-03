@@ -31,69 +31,6 @@ export class AppProcess {
       const overallSummary = this.overallTaskSummary();
       const projectSummary = this.overallTaskByProjectSummary();
       const individualSummary = this.overallTaskByAssignedSummary();
-      console.log(projectSummary);
-      // console.log('Summary - overall');
-      // console.log('totalTasks', summaryTask.totalTasks);
-      // console.log('openTasksCount', summaryTask.openTasksCount);
-      // console.log(
-      //   'inProgressStatusTasksCount',
-      //   summaryTask.inProgressStatusTasksCount
-      // );
-      // console.log('onReviewTasksCount', summaryTask.onReviewTasksCount);
-      // console.log('onCloseTasksCount', summaryTask.onCloseTasksCount);
-      // console.log('totalTasks', summaryTask.totalTasks);
-      // console.log('tasksCompletedCount', summaryTask.tasksCompletedCount);
-      // console.log(
-      //   'tasksCompletedOnTimeCount',
-      //   summaryTask.tasksCompletedOnTimeCount
-      // );
-      // console.log('tasksTimelinessRate', summaryTask.tasksTimelinessRate);
-      // console.log('tasksCompletenesRate', summaryTask.tasksCompletenesRate);
-
-      // // per projects list
-      // console.log('`\nSummary per project list');
-      // const tasksByProjectList = summaryTask.tasksByProject;
-      // for (const project of _.keys(tasksByProjectList).sort()) {
-      //   console.log(`\n\nSummary for project ${project}`);
-      //   const assigneeTask = new ClickUpReportUtil(tasksByProjectList[project]);
-      //   console.log('totalTasks', assigneeTask.totalTasks);
-      //   console.log('openTasksCount', assigneeTask.openTasksCount);
-      //   console.log(
-      //     'inProgressStatusTasksCount',
-      //     assigneeTask.inProgressStatusTasksCount
-      //   );
-      //   console.log('onReviewTasksCount', assigneeTask.onReviewTasksCount);
-      //   console.log('onCloseTasksCount', assigneeTask.onCloseTasksCount);
-      //   console.log('totalTasks', assigneeTask.totalTasks);
-      //   console.log('tasksCompletedCount', assigneeTask.tasksCompletedCount);
-      //   console.log(
-      //     'tasksCompletedOnTimeCount',
-      //     assigneeTask.tasksCompletedOnTimeCount
-      //   );
-      //   console.log('tasksTimelinessRate', assigneeTask.tasksTimelinessRate);
-      //   console.log('tasksCompletenesRate', assigneeTask.tasksCompletenesRate);
-      // }
-      // const tasksByAssignee = _.groupBy(this._tasks, assigneeColumn);
-      // for (const assignee of _.keys(tasksByAssignee).sort()) {
-      //   console.log(`\n\nSummary for assignee ${assignee}`);
-      //   const assigneeTask = new ClickUpReportUtil(tasksByAssignee[assignee]);
-      //   console.log('totalTasks', assigneeTask.totalTasks);
-      //   console.log('openTasksCount', assigneeTask.openTasksCount);
-      //   console.log(
-      //     'inProgressStatusTasksCount',
-      //     assigneeTask.inProgressStatusTasksCount
-      //   );
-      //   console.log('onReviewTasksCount', assigneeTask.onReviewTasksCount);
-      //   console.log('onCloseTasksCount', assigneeTask.onCloseTasksCount);
-      //   console.log('totalTasks', assigneeTask.totalTasks);
-      //   console.log('tasksCompletedCount', assigneeTask.tasksCompletedCount);
-      //   console.log(
-      //     'tasksCompletedOnTimeCount',
-      //     assigneeTask.tasksCompletedOnTimeCount
-      //   );
-      //   console.log('tasksTimelinessRate', assigneeTask.tasksTimelinessRate);
-      //   console.log('tasksCompletenesRate', assigneeTask.tasksCompletenesRate);
-      // }
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
@@ -221,6 +158,69 @@ export class AppProcess {
   overallTaskByProjectSummary(): any {
     const summaryJson: any[] = [];
     try {
+      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
+      const tasksByProjectList = clickUpReportUtil.tasksByProject;
+      for (const project of _.keys(tasksByProjectList).sort()) {
+        const projectClickUpReportUtil = new ClickUpReportUtil(
+          tasksByProjectList[project]
+        );
+        summaryJson.push(
+          { item1: `${project}` },
+          {
+            item1: 'Completeness',
+            item2: `${projectClickUpReportUtil.tasksCompletenesRate}%`
+          },
+          {
+            item1: 'Timeliness',
+            item2: `${projectClickUpReportUtil.tasksTimelinessRate}%`
+          },
+          { item1: '' },
+          { item1: 'Distribution by Status' },
+          {
+            item1: 'Open',
+            item2: 'In Progress',
+            item3: 'On review',
+            item4: 'Closed/Completed',
+            item5: 'Total'
+          },
+          {
+            item1: `${projectClickUpReportUtil.openTasksCount}`,
+            item2: `${projectClickUpReportUtil.inProgressStatusTasksCount}`,
+            item3: `${projectClickUpReportUtil.onReviewTasksCount}`,
+            item4: `${projectClickUpReportUtil.onCloseTasksCount}`,
+            item5: `${projectClickUpReportUtil.totalTasks}`
+          },
+          { item1: `` },
+          { item1: 'Distribution by Assignee and status' },
+          {
+            item1: 'Assignee',
+            item2: 'Completeness',
+            item3: 'Timeliness',
+            item4: 'Open',
+            item5: 'In Progress',
+            item6: 'On review',
+            item7: 'Closed/Completed',
+            item8: 'Total'
+          }
+        );
+        const tasksByAssignee = projectClickUpReportUtil.tasksByAssignee;
+        for (const assignee of _.keys(tasksByAssignee).sort()) {
+          const assigneeClickUpReportUtil = new ClickUpReportUtil(
+            tasksByAssignee[assignee]
+          );
+          summaryJson.push({
+            item1: `${assignee}`,
+            item2: `${assigneeClickUpReportUtil.tasksCompletenesRate}`,
+            item3: `${assigneeClickUpReportUtil.tasksTimelinessRate}`,
+            item4: `${assigneeClickUpReportUtil.openTasksCount}`,
+            item5: `${assigneeClickUpReportUtil.inProgressStatusTasksCount}`,
+            item6: `${assigneeClickUpReportUtil.onReviewTasksCount}`,
+            item7: `${assigneeClickUpReportUtil.onCloseTasksCount}`,
+            item8: `${assigneeClickUpReportUtil.totalTasks}`
+          });
+        }
+        summaryJson.push({ item1: '' });
+      }
     } catch (error) {}
     return summaryJson;
   }
