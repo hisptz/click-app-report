@@ -1,7 +1,12 @@
 import _ from 'lodash';
 import {
+  allowedNumberOnReviewTasks,
   closedStatus,
+  completedDateColum,
+  dateClosedColumn,
+  dueDateColumn,
   inProgressStatus,
+  lastUpdatedDateColumn,
   openStatus,
   reviewStatus,
   statusColumn,
@@ -83,10 +88,31 @@ export class ClickUpReportUtil {
 
   get tasksCompletedOnTimeCount(): number {
     let count = 0;
-    // _.filter(this._task || [], (task:any)=>{
-    //   const status = task[statusColumn] || "";
-    //   return taskClosedStatus.includes(status);
-    // })
+    try {
+      count = _.filter(this._task || [], (task: any) => {
+        const status = task[statusColumn] || '';
+        let completedOnTime = false;
+        if (taskClosedStatus.includes(status)) {
+          const dueDate = task[dueDateColumn];
+          const lastUpdateDate = task[lastUpdatedDateColumn];
+          const closedDate = task[dateClosedColumn];
+          const completedDate = task[completedDateColum];
+          if (completedDate) {
+            completedOnTime = new Date(dueDate) >= new Date(completedDate);
+          } else if (status === reviewStatus && lastUpdateDate) {
+            completedOnTime = new Date(dueDate) >= new Date(lastUpdateDate);
+          } else if (closedDate) {
+            const date = new Date(closedDate);
+            completedOnTime =
+              new Date(dueDate) >=
+              new Date(
+                date.setDate(date.getDate() - allowedNumberOnReviewTasks)
+              );
+          }
+        }
+        return completedOnTime;
+      }).length;
+    } catch (error) {}
     return count;
   }
 
