@@ -32,7 +32,6 @@ export class AppProcess {
       const projectSummary = this.overallTaskByProjectSummary();
       const individualSummary = this.overallTaskByAssignedSummary();
       console.log(projectSummary);
-      console.log(individualSummary);
       // console.log('Summary - overall');
       // console.log('totalTasks', summaryTask.totalTasks);
       // console.log('openTasksCount', summaryTask.openTasksCount);
@@ -168,13 +167,6 @@ export class AppProcess {
   overallTaskByAssignedSummary(): any {
     const summaryJson: any[] = [];
     try {
-    } catch (error) {}
-    return summaryJson;
-  }
-
-  overallTaskByProjectSummary(): any {
-    const summaryJson: any[] = [];
-    try {
       const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
       const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
       for (const assignee of _.keys(tasksByAssignee).sort()) {
@@ -210,7 +202,25 @@ export class AppProcess {
           { item1: `` },
           { item1: 'Distribution by Project/List Name' }
         );
+        const tasksByProjectList = assigneeClickUpReportUtil.tasksByProject;
+        for (const project of _.keys(tasksByProjectList).sort()) {
+          const projectClickUpReportUtil = new ClickUpReportUtil(
+            tasksByProjectList[project]
+          );
+          summaryJson.push({
+            item1: `${project}`,
+            item2: `${projectClickUpReportUtil.totalTasks}`
+          });
+        }
+        summaryJson.push({ item1: '' });
       }
+    } catch (error) {}
+    return summaryJson;
+  }
+
+  overallTaskByProjectSummary(): any {
+    const summaryJson: any[] = [];
+    try {
     } catch (error) {}
     return summaryJson;
   }
