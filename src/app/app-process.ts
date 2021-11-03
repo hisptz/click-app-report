@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import {
   assigneeColumn,
-  dateFielsColumns
+  dateFielsColumns,
+  taskListColum
 } from '../constants/click-up-excel-file-constant';
 import { AppUtil } from '../utils/app-util';
 import { ClickUpReportUtil } from '../utils/click-report-util';
@@ -45,10 +46,13 @@ export class AppProcess {
       );
       console.log('tasksTimelinessRate', summaryTask.tasksTimelinessRate);
       console.log('tasksCompletenesRate', summaryTask.tasksCompletenesRate);
-      const tasksByAssignee = _.groupBy(this._tasks, assigneeColumn);
-      for (const assignee of _.keys(tasksByAssignee)) {
-        console.log(`\n\nSummary for assignee ${assignee}`);
-        const assigneeTask = new ClickUpReportUtil(tasksByAssignee[assignee]);
+
+      // per projects list
+      console.log('`\nSummary per project list');
+      const tasksByProjectList = _.groupBy(this._tasks, taskListColum);
+      for (const project of _.keys(tasksByProjectList).sort()) {
+        console.log(`\n\nSummary for project ${project}`);
+        const assigneeTask = new ClickUpReportUtil(tasksByProjectList[project]);
         console.log('totalTasks', assigneeTask.totalTasks);
         console.log('openTasksCount', assigneeTask.openTasksCount);
         console.log(
@@ -66,6 +70,27 @@ export class AppProcess {
         console.log('tasksTimelinessRate', assigneeTask.tasksTimelinessRate);
         console.log('tasksCompletenesRate', assigneeTask.tasksCompletenesRate);
       }
+      // const tasksByAssignee = _.groupBy(this._tasks, assigneeColumn);
+      // for (const assignee of _.keys(tasksByAssignee).sort()) {
+      //   console.log(`\n\nSummary for assignee ${assignee}`);
+      //   const assigneeTask = new ClickUpReportUtil(tasksByAssignee[assignee]);
+      //   console.log('totalTasks', assigneeTask.totalTasks);
+      //   console.log('openTasksCount', assigneeTask.openTasksCount);
+      //   console.log(
+      //     'inProgressStatusTasksCount',
+      //     assigneeTask.inProgressStatusTasksCount
+      //   );
+      //   console.log('onReviewTasksCount', assigneeTask.onReviewTasksCount);
+      //   console.log('onCloseTasksCount', assigneeTask.onCloseTasksCount);
+      //   console.log('totalTasks', assigneeTask.totalTasks);
+      //   console.log('tasksCompletedCount', assigneeTask.tasksCompletedCount);
+      //   console.log(
+      //     'tasksCompletedOnTimeCount',
+      //     assigneeTask.tasksCompletedOnTimeCount
+      //   );
+      //   console.log('tasksTimelinessRate', assigneeTask.tasksTimelinessRate);
+      //   console.log('tasksCompletenesRate', assigneeTask.tasksCompletenesRate);
+      // }
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
