@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import {
   assigneeColumn,
-  dateFielsColumns,
-  taskListColum
+  dateFielsColumns
 } from '../constants/click-up-excel-file-constant';
 import { AppUtil } from '../utils/app-util';
 import { ClickUpReportUtil } from '../utils/click-report-util';
@@ -12,13 +11,22 @@ import { LogsUtil } from '../utils/logs-util';
 export class AppProcess {
   private _reportGeneratedDate: Date;
   private _tasks!: any[];
-
+  private _reportFile;
+  private _clickUpReportFile;
   private excelUtil: ExcelUtil;
   private logsUtil: LogsUtil;
-  constructor(reportGeneratedDate: Date = new Date()) {
+  constructor(
+    reportGeneratedDate: Date = new Date(),
+    inputExcelFile: string = 'task_list'
+  ) {
     this._reportGeneratedDate = reportGeneratedDate;
-    // task_list-Sheet1  task_list
-    this.excelUtil = new ExcelUtil('task_list');
+    this._reportFile = `click-up-summary-report-as_of_${
+      reportGeneratedDate.toISOString().split('T')[0]
+    }`;
+    this._clickUpReportFile = `click-up-source-file-as_of_${
+      reportGeneratedDate.toISOString().split('T')[0]
+    }`;
+    this.excelUtil = new ExcelUtil(inputExcelFile);
     this.logsUtil = new LogsUtil();
   }
 
@@ -31,6 +39,18 @@ export class AppProcess {
       const overallSummary = this.overallTaskSummary();
       const projectSummary = this.overallTaskByProjectSummary();
       const individualSummary = this.overallTaskByAssignedSummary();
+      const jsonDataObject = {
+        overallSummary,
+        individualSummary,
+        projectSummary
+      };
+      await new ExcelUtil(this._reportFile).writeToMultipleSheetExcelFile(
+        jsonDataObject,
+        true
+      );
+      await new ExcelUtil(
+        this._clickUpReportFile
+      ).writeToMultipleSheetExcelFile(jsonDataObject, false);
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
@@ -73,7 +93,7 @@ export class AppProcess {
           item5: `${clickUpReportUtil.totalTasks}`
         },
         { item1: '' },
-        { item1: 'Overall Distribution by Project list' },
+        { item1: 'Overall Distribution by Project/List Name' },
         {
           item1: 'Project/List Name',
           item2: 'Open',
