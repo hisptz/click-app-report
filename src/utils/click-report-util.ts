@@ -10,15 +10,24 @@ import {
   openStatus,
   reviewStatus,
   statusColumn,
-  taskClosedStatus
+  taskClosedStatus,
+  taskListColum,
+  assigneeColumn
 } from '../constants/click-up-excel-file-constant';
 
 export class ClickUpReportUtil {
-  //@TODO support by projects or tasks list
-  private _task: any[];
+  private _tasks: any[];
 
   constructor(tasks: any[]) {
-    this._task = tasks;
+    this._tasks = tasks;
+  }
+
+  get tasksByAssignee(): any {
+    return _.groupBy(this._tasks, assigneeColumn);
+  }
+
+  get tasksByProject(): any {
+    return _.groupBy(this._tasks, taskListColum);
   }
 
   get tasksCompletenesRate(): string {
@@ -34,7 +43,7 @@ export class ClickUpReportUtil {
   get openTasksCount(): number {
     let count = 0;
     try {
-      count = _.filter(this._task || [], (task: any) => {
+      count = _.filter(this._tasks || [], (task: any) => {
         const status = task[statusColumn] || '';
         return status === openStatus;
       }).length;
@@ -45,7 +54,7 @@ export class ClickUpReportUtil {
   get inProgressStatusTasksCount(): number {
     let count = 0;
     try {
-      count = _.filter(this._task || [], (task: any) => {
+      count = _.filter(this._tasks || [], (task: any) => {
         const status = task[statusColumn] || '';
         return status === inProgressStatus;
       }).length;
@@ -56,7 +65,7 @@ export class ClickUpReportUtil {
   get onReviewTasksCount(): number {
     let count = 0;
     try {
-      count = _.filter(this._task || [], (task: any) => {
+      count = _.filter(this._tasks || [], (task: any) => {
         const status = task[statusColumn] || '';
         return status === reviewStatus;
       }).length;
@@ -67,7 +76,7 @@ export class ClickUpReportUtil {
   get onCloseTasksCount(): number {
     let count = 0;
     try {
-      count = _.filter(this._task || [], (task: any) => {
+      count = _.filter(this._tasks || [], (task: any) => {
         const status = task[statusColumn] || '';
         return status === closedStatus;
       }).length;
@@ -78,7 +87,7 @@ export class ClickUpReportUtil {
   get tasksCompletedCount(): number {
     let count = 0;
     try {
-      count = _.filter(this._task || [], (task: any) => {
+      count = _.filter(this._tasks || [], (task: any) => {
         const status = task[statusColumn] || '';
         return taskClosedStatus.includes(status);
       }).length;
@@ -89,7 +98,7 @@ export class ClickUpReportUtil {
   get tasksCompletedOnTimeCount(): number {
     let count = 0;
     try {
-      count = _.filter(this._task || [], (task: any) => {
+      count = _.filter(this._tasks || [], (task: any) => {
         const status = task[statusColumn] || '';
         let completedOnTime = false;
         if (taskClosedStatus.includes(status)) {
@@ -117,6 +126,6 @@ export class ClickUpReportUtil {
   }
 
   get totalTasks(): number {
-    return this._task.length;
+    return this._tasks.length;
   }
 }
