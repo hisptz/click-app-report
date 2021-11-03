@@ -1,6 +1,10 @@
 import _ from 'lodash';
-import { DATE_FIELD_COLUMS } from '../constants/click-up-excel-file-constant';
+import {
+  assigneeColumn,
+  dateFielsColumns
+} from '../constants/click-up-excel-file-constant';
 import { AppUtil } from '../utils/app-util';
+import { ClickUpReportUtil } from '../utils/click-report-util';
 import { ExcelUtil } from '../utils/excel-util';
 import { LogsUtil } from '../utils/logs-util';
 
@@ -13,9 +17,8 @@ export class AppProcess {
   constructor(reportGeneratedDate: Date = new Date()) {
     this._reportGeneratedDate = reportGeneratedDate;
     // task_list-Sheet1  task_list
-    this.excelUtil = new ExcelUtil('task_list-Sheet1');
+    this.excelUtil = new ExcelUtil('task_list');
     this.logsUtil = new LogsUtil();
-    console.log({ reportGeneratedDate });
   }
 
   get reportGeneratedDate(): Date {
@@ -24,6 +27,27 @@ export class AppProcess {
 
   async generateTaskSummary() {
     try {
+      const summaryTask = new ClickUpReportUtil(this._tasks);
+      console.log('Summary - overall');
+      console.log('totalTasks', summaryTask.totalTasks);
+      console.log('openTasksCount', summaryTask.openTasksCount);
+      console.log(
+        'inProgressStatusTasksCount',
+        summaryTask.inProgressStatusTasksCount
+      );
+      console.log('onReviewTasksCount', summaryTask.onReviewTasksCount);
+      console.log('onCloseTasksCount', summaryTask.onCloseTasksCount);
+      console.log('totalTasks', summaryTask.totalTasks);
+      console.log('tasksCompletedCount', summaryTask.tasksCompletedCount);
+      console.log(
+        'tasksCompletedOnTimeCount',
+        summaryTask.tasksCompletedOnTimeCount
+      );
+      console.log('tasksTimelinessRate', summaryTask.tasksTimelinessRate);
+      console.log('tasksCompletenesRate', summaryTask.tasksCompletenesRate);
+      const tasksByAssignee = _.groupBy(this._tasks, assigneeColumn);
+      console.log(_.keys(tasksByAssignee));
+
       // get overall summary
       // Overall
       // per projects
@@ -46,20 +70,32 @@ export class AppProcess {
       );
       const tasksObject = await this.excelUtil.getJsonDataFromExcelOrCsvFile();
       this._tasks = _.flattenDeep(
-        _.map(_.keys(tasksObject || {}), (key) => {
-          return _.map(tasksObject[key] || [], (task: any) => {
-            const formattedTask: any = {};
-            for (const colum of _.keys(task)) {
-              let value = task[colum];
-              if (DATE_FIELD_COLUMS.indexOf(colum) > -1) {
-                const reportGeneratedDate = this.reportGeneratedDate;
-                value = AppUtil.getTaskDate(value, reportGeneratedDate);
-              }
-              formattedTask[colum] = value;
-            }
-            return formattedTask;
-          });
-        })
+        _.map(
+          _.flattenDeep(
+            _.map(_.keys(tasksObject || {}), (key) => {
+              return _.map(tasksObject[key] || [], (task: any) => {
+                const formattedTask: any = {};
+                for (const colum of _.keys(task)) {
+                  let value = task[colum];
+                  if (dateFielsColumns.indexOf(colum) > -1) {
+                    const reportGeneratedDate = this.reportGeneratedDate;
+                    value = AppUtil.getTaskDate(value, reportGeneratedDate);
+                  }
+                  formattedTask[colum] = value;
+                }
+                return formattedTask;
+              });
+            })
+          ),
+          (task) => {
+            const assignees = `${task[assigneeColumn] || ''}`.split(',');
+            return _.map(assignees, (assignee) => {
+              const formattedTask: any = {};
+              formattedTask[assigneeColumn] = `${assignee}`.trim();
+              return { ...task, ...formattedTask };
+            });
+          }
+        )
       );
     } catch (error: any) {
       await this.logsUtil.addLogs(

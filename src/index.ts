@@ -14,6 +14,7 @@ async function starApp() {
     await logsUtil.clearLogs();
     await logsUtil.addLogs('info', 'start an app', 'app');
     await appProcess.setAllTask();
+    await appProcess.generateTaskSummary();
     await logsUtil.addLogs('info', 'End of script', 'app');
   } catch (error: any) {
     error = error.message || error;
