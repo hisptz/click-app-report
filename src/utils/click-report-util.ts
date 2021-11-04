@@ -14,11 +14,12 @@ import {
   taskListColum,
   assigneeColumn
 } from '../constants/click-up-excel-file-constant';
+import { ApiProjectTaskModel } from '../models/api-project-task-model';
 
 export class ClickUpReportUtil {
-  private _tasks: any[];
+  private _tasks: Array<ApiProjectTaskModel>;
 
-  constructor(tasks: any[]) {
+  constructor(tasks: Array<ApiProjectTaskModel>) {
     this._tasks = tasks;
   }
 

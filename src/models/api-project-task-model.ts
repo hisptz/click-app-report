@@ -12,7 +12,7 @@ export interface ApiProjectTaskModel {
   closedDate: string | null;
   completedDate: string | null;
   list: string;
-  assignees: Array<ApiProjectUserModel>;
+  assignee: ApiProjectUserModel;
   project?: string;
   folder?: string;
 }

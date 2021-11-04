@@ -38,21 +38,11 @@ export class ApiUtil {
     try {
       const url = `${this._baseUrl}/team/${this._teamId}/task?due_date_lt=${toDueDateLimit}&include_closed=true&due_date_gt=${fromDueDateLimit}&reverse=true`;
       const response: any = await HttpUtil.getHttp(this._headers, url);
-
       for (const taskObj of response.tasks || []) {
         const projectObj = taskObj.project || {};
         const folderObj = taskObj.folder || {};
         const statusObj = taskObj.status || {};
         const listObj = taskObj.list || {};
-        const assignees: Array<ApiProjectUserModel> = _.flattenDeep(
-          _.map(taskObj.assignees || [], (user) => {
-            return {
-              id: user.id || '',
-              username: user.username || '',
-              email: user.email || ''
-            };
-          })
-        );
         const completedDateCustomFieldObj = _.find(
           taskObj.custom_fields || [],
           (customField) => {
@@ -64,37 +54,43 @@ export class ApiUtil {
             );
           }
         );
-        projectTasks.push({
-          id: `${taskObj.id || ''}`,
-          name: `${taskObj.name || ''}`,
-          description: `${taskObj.description || ''}`,
-          status: statusObj.status || ``,
-          createdDate: taskObj.date_created
-            ? AppUtil.getFormattedDate(parseInt(taskObj.date_created, 10))
-            : null,
-          dueDate: taskObj.due_date
-            ? AppUtil.getFormattedDate(parseInt(taskObj.due_date, 10))
-            : null,
-          lastUpdatedDate: taskObj.date_updated
-            ? AppUtil.getFormattedDate(parseInt(taskObj.date_updated, 10))
-            : null,
-          startDate: taskObj.start_date
-            ? AppUtil.getFormattedDate(parseInt(taskObj.start_date, 10))
-            : null,
-          closedDate: taskObj.date_closed
-            ? AppUtil.getFormattedDate(parseInt(taskObj.date_closed, 10))
-            : null,
-          completedDate:
-            completedDateCustomFieldObj && completedDateCustomFieldObj.value
-              ? AppUtil.getFormattedDate(
-                  parseInt(completedDateCustomFieldObj.value, 10)
-                )
+        for (const user of taskObj.assignees || []) {
+          projectTasks.push({
+            id: `${taskObj.id || ''}`,
+            name: `${taskObj.name || ''}`,
+            description: `${taskObj.description || ''}`,
+            status: statusObj.status || ``,
+            createdDate: taskObj.date_created
+              ? AppUtil.getFormattedDate(parseInt(taskObj.date_created, 10))
               : null,
-          list: listObj.name || ``,
-          assignees,
-          project: projectObj.name || ``,
-          folder: folderObj.name || ``
-        });
+            dueDate: taskObj.due_date
+              ? AppUtil.getFormattedDate(parseInt(taskObj.due_date, 10))
+              : null,
+            lastUpdatedDate: taskObj.date_updated
+              ? AppUtil.getFormattedDate(parseInt(taskObj.date_updated, 10))
+              : null,
+            startDate: taskObj.start_date
+              ? AppUtil.getFormattedDate(parseInt(taskObj.start_date, 10))
+              : null,
+            closedDate: taskObj.date_closed
+              ? AppUtil.getFormattedDate(parseInt(taskObj.date_closed, 10))
+              : null,
+            completedDate:
+              completedDateCustomFieldObj && completedDateCustomFieldObj.value
+                ? AppUtil.getFormattedDate(
+                    parseInt(completedDateCustomFieldObj.value, 10)
+                  )
+                : null,
+            list: listObj.name || ``,
+            assignee: {
+              id: user.id || '',
+              username: user.username || '',
+              email: user.email || ''
+            },
+            project: projectObj.name || ``,
+            folder: folderObj.name || ``
+          });
+        }
       }
     } catch (error: any) {
       await this.logsUtil.addLogs(
@@ -103,7 +99,7 @@ export class ApiUtil {
         'getProjectTasks'
       );
     }
-    return projectTasks;
+    return _.flattenDeep(projectTasks);
   }
 
   async getProjectUsers(): Promise<Array<ApiProjectUserModel>> {

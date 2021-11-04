@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { ApiConfigModel } from '../models/api-config-model';
-import { ApiProjectFolderModel } from '../models/api-project-folder-model';
+import { ApiProjectTaskModel } from '../models/api-project-task-model';
 import { ApiUtil } from '../utils/api-util';
 import { ClickUpReportUtil } from '../utils/click-report-util';
 import { ExcelUtil } from '../utils/excel-util';
@@ -8,7 +8,7 @@ import { LogsUtil } from '../utils/logs-util';
 
 export class AppProcess {
   private _reportGeneratedDate: Date;
-  private _tasks!: any[];
+  private _tasks!: Array<ApiProjectTaskModel>;
   private _reportFile;
   private _clickUpReportFile;
   private logsUtil: LogsUtil;
@@ -41,41 +41,10 @@ export class AppProcess {
         'Preparing Tasks for report generation',
         'setAllTask'
       );
-      const tasks = await this.apiUtil.getProjectTasks(
+      this._tasks = await this.apiUtil.getProjectTasks(
         fromDueDateLimit,
         toDueDateLimit
       );
-      console.log(tasks);
-
-      //  const tasksObject = await this.excelUtil.getJsonDataFromExcelOrCsvFile();
-      // this._tasks = _.flattenDeep(
-      //   _.map(
-      //     _.flattenDeep(
-      //       _.map(_.keys(tasksObject || {}), (key) => {
-      //         return _.map(tasksObject[key] || [], (task: any) => {
-      //           const formattedTask: any = {};
-      //           for (const colum of _.keys(task)) {
-      //             let value = task[colum];
-      //             if (dateFielsColumns.indexOf(colum) > -1) {
-      //               const reportGeneratedDate = this.reportGeneratedDate;
-      //               value = AppUtil.getTaskDate(value, reportGeneratedDate);
-      //             }
-      //             formattedTask[colum] = value;
-      //           }
-      //           return formattedTask;
-      //         });
-      //       })
-      //     ),
-      //     (task) => {
-      //       const assignees = `${task[assigneeColumn] || ''}`.split(',');
-      //       return _.map(assignees, (assignee) => {
-      //         const formattedTask: any = {};
-      //         formattedTask[assigneeColumn] = `${assignee}`.trim();
-      //         return { ...task, ...formattedTask };
-      //       });
-      //     }
-      //   )
-      // );
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
@@ -95,15 +64,18 @@ export class AppProcess {
         'Individual summary': individualSummary,
         'Project summary': projectSummary
       };
-      await new ExcelUtil(this._reportFile).writeToMultipleSheetExcelFile(
-        jsonDataObject,
-        true
-      );
-      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
-      await new ExcelUtil(this._clickUpReportFile).writeToSingleSheetExcelFile(
-        clickUpReportUtil.sortedTasks,
-        false
-      );
+
+      console.log(jsonDataObject);
+
+      // await new ExcelUtil(this._reportFile).writeToMultipleSheetExcelFile(
+      //   jsonDataObject,
+      //   true
+      // );
+      // const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
+      // await new ExcelUtil(this._clickUpReportFile).writeToSingleSheetExcelFile(
+      //   clickUpReportUtil.sortedTasks,
+      //   false
+      // );
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',

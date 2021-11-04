@@ -6,15 +6,15 @@ starApp();
 
 async function starApp() {
   try {
-    const fromDueDateLimit = new Date('2021-11-01').getTime();
-    const toDueDateLimit = new Date('2021-11-02').getTime();
+    const fromDueDateLimit = new Date('2021-11-03').getTime();
+    const toDueDateLimit = new Date('2021-11-04').getTime();
     const reportGeneratedDate = new Date();
     const appProcess = new AppProcess(apiConfig, reportGeneratedDate);
     const logsUtil = new LogsUtil();
     await logsUtil.clearLogs();
     await logsUtil.addLogs('info', 'start an app', 'app');
     await appProcess.setAllTask(fromDueDateLimit, toDueDateLimit);
-    // await appProcess.generateTaskSummary();
+    await appProcess.generateTaskSummary();
     await logsUtil.addLogs('info', 'End of script', 'app');
   } catch (error: any) {
     error = error.message || error;
