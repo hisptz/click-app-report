@@ -37,12 +37,26 @@ export class ApiUtil {
     try {
       const url = `${this._baseUrl}/team/${this._teamId}/task?due_date_lt=${toDueDateLimit}&include_closed=true&due_date_gt=${fromDueDateLimit}&reverse=true`;
       const response: any = await HttpUtil.getHttp(this._headers, url);
+
       for (const taskObj of response.tasks || []) {
+        const projectObj = taskObj.project || {};
+        const folderObj = taskObj.folder || {};
+        const statusObj = taskObj.status || {};
+        const listObj = taskObj.list || {};
+        const assignees: Array<ApiProjectUserModel> = _.flattenDeep(
+          _.map(taskObj.assignees || [], (user) => {
+            return {
+              id: user.id || '',
+              username: user.username || '',
+              email: user.email || ''
+            };
+          })
+        );
         projectTasks.push({
           id: `${taskObj.id || ''}`,
           name: `${taskObj.name || ''}`,
           description: `${taskObj.description || ''}`,
-          status: ``,
+          status: statusObj.status || ``,
           createdDate: taskObj.date_created
             ? AppUtil.getFormattedDate(taskObj.date_created)
             : null,
@@ -59,11 +73,10 @@ export class ApiUtil {
             ? AppUtil.getFormattedDate(taskObj.date_closed)
             : null,
           completedDate: '',
-          list: ``,
-          space: ``,
-          assignees: [],
-          project: ``,
-          folder: ``
+          list: listObj.name || ``,
+          assignees,
+          project: projectObj.name || ``,
+          folder: folderObj.name || ``
         });
       }
     } catch (error: any) {

@@ -12,7 +12,6 @@ export interface ApiProjectTaskModel {
   closedDate: string | null;
   completedDate: string | null;
   list: string;
-  space: string;
   assignees: Array<ApiProjectUserModel>;
   project?: string;
   folder?: string;
