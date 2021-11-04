@@ -5,7 +5,7 @@ export interface ApiProjectTaskModel {
   name: string;
   description: string;
   status: string;
-  createdDate: string | null;
+  createdDate: string;
   dueDate: string | null;
   lastUpdatedDate: string | null;
   startDate: string | null;

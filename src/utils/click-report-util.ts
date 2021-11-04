@@ -2,14 +2,9 @@ import _ from 'lodash';
 import {
   allowedNumberOnReviewTasks,
   closedStatus,
-  completedDateColum,
-  dateClosedColumn,
-  dueDateColumn,
   inProgressStatus,
-  lastUpdatedDateColumn,
   openStatus,
   reviewStatus,
-  statusColumn,
   taskClosedStatus
 } from '../constants/click-up-excel-file-constant';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
@@ -23,8 +18,8 @@ export class ClickUpReportUtil {
 
   get sortedTasks(): any {
     return _.sortBy(
-      _.sortBy(this._tasks, (task) => task.assignee.username || ''),
-      ['list']
+      _.sortBy(this._tasks, ['list']),
+      (task) => task.assignee.username || ''
     );
   }
 
@@ -64,14 +59,8 @@ export class ClickUpReportUtil {
   }
 
   get onCloseTasksCount(): number {
-    let count = 0;
-    try {
-      count = _.filter(this._tasks || [], (task: any) => {
-        const status = task[statusColumn] || '';
-        return status === closedStatus;
-      }).length;
-    } catch (error) {}
-    return count;
+    return _.filter(this._tasks || [], (task) => task.status === closedStatus)
+      .length;
   }
 
   get tasksCompletedCount(): number {
@@ -83,14 +72,14 @@ export class ClickUpReportUtil {
   get tasksCompletedOnTimeCount(): number {
     let count = 0;
     try {
-      count = _.filter(this._tasks || [], (task: any) => {
-        const status = task[statusColumn] || '';
+      count = _.filter(this._tasks || [], (task) => {
+        const status = task.status;
         let completedOnTime = false;
         if (taskClosedStatus.includes(status)) {
-          const dueDate = task[dueDateColumn];
-          const lastUpdateDate = task[lastUpdatedDateColumn];
-          const closedDate = task[dateClosedColumn];
-          const completedDate = task[completedDateColum];
+          const dueDate = task.dueDate || task.createdDate;
+          const lastUpdateDate = task.lastUpdatedDate;
+          const closedDate = task.closedDate;
+          const completedDate = task.completedDate;
           if (completedDate) {
             completedOnTime = new Date(dueDate) >= new Date(completedDate);
           } else if (status === reviewStatus && lastUpdateDate) {

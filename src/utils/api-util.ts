@@ -62,7 +62,7 @@ export class ApiUtil {
             status: statusObj.status || ``,
             createdDate: taskObj.date_created
               ? AppUtil.getFormattedDate(parseInt(taskObj.date_created, 10))
-              : null,
+              : '',
             dueDate: taskObj.due_date
               ? AppUtil.getFormattedDate(parseInt(taskObj.due_date, 10))
               : null,

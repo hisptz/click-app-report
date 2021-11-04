@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
+import { ApiProjectUserModel } from '../models/api-project-user-model';
 import { ApiUtil } from '../utils/api-util';
+import { AppUtil } from '../utils/app-util';
 import { ClickUpReportUtil } from '../utils/click-report-util';
 import { ExcelUtil } from '../utils/excel-util';
 import { LogsUtil } from '../utils/logs-util';
@@ -54,9 +56,11 @@ export class AppProcess {
     }
   }
 
-  async generateTaskSummary() {
+  async generateTaskSummary(fromDueDateLimit: number, toDueDateLimit: number) {
     try {
-      const overallSummary = this.overallTaskSummary();
+      const fromDate = AppUtil.getFormattedDate(fromDueDateLimit);
+      const toDate = AppUtil.getFormattedDate(toDueDateLimit);
+      const overallSummary = this.overallTaskSummary(fromDate, toDate);
       const projectSummary = this.overallTaskByProjectSummary();
       const individualSummary = this.overallTaskByAssignedSummary();
       const jsonDataObject = {
@@ -64,18 +68,19 @@ export class AppProcess {
         'Individual summary': individualSummary,
         'Project summary': projectSummary
       };
-
-      console.log(jsonDataObject);
-
-      // await new ExcelUtil(this._reportFile).writeToMultipleSheetExcelFile(
-      //   jsonDataObject,
-      //   true
-      // );
-      // const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
-      // await new ExcelUtil(this._clickUpReportFile).writeToSingleSheetExcelFile(
-      //   clickUpReportUtil.sortedTasks,
-      //   false
-      // );
+      await new ExcelUtil(this._reportFile).writeToMultipleSheetExcelFile(
+        jsonDataObject,
+        true
+      );
+      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
+      await new ExcelUtil(this._clickUpReportFile).writeToSingleSheetExcelFile(
+        _.flattenDeep(
+          _.map(clickUpReportUtil.sortedTasks, (task: ApiProjectTaskModel) => {
+            return { ...{}, ...task, assignee: task.assignee.username || '' };
+          })
+        ),
+        false
+      );
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
@@ -85,8 +90,13 @@ export class AppProcess {
     }
   }
 
-  overallTaskSummary(): any {
-    const summaryJson: any[] = [];
+  overallTaskSummary(fromDate: string, toDate: string): any {
+    const summaryJson: any[] = [
+      {
+        item1: `Click up report of activities from ${fromDate} to ${toDate}`
+      },
+      { item1: `` }
+    ];
     try {
       const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
       summaryJson.push({
