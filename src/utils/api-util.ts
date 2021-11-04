@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { ApiConfigModel } from '../models/api-config-model';
-import { ApiProjectFolder } from '../models/api-project-folder';
+import { ApiProjectFolderModel } from '../models/api-project-folder-model';
+import { ApiProjectUserModel } from '../models/api-project-user-model';
 import { HttpUtil } from './http-util';
 import { LogsUtil } from './logs-util';
 
@@ -21,8 +22,32 @@ export class ApiUtil {
     this.logsUtil = new LogsUtil();
   }
 
-  async getProjectFolderList(): Promise<Array<ApiProjectFolder>> {
-    const folderList: Array<ApiProjectFolder> = [];
+  async getProjectUsers(): Promise<Array<ApiProjectUserModel>> {
+    const users: Array<ApiProjectUserModel> = [];
+    try {
+      const url = `${this._baseUrl}/team/${this._teamId}`;
+      const response: any = await HttpUtil.getHttp(this._headers, url);
+      const team = response.team || {};
+      for (const member of team.members || []) {
+        const user = member.user || {};
+        users.push({
+          id: user.id || '',
+          username: user.username || '',
+          email: user.email || ''
+        });
+      }
+    } catch (error: any) {
+      await this.logsUtil.addLogs(
+        'error',
+        error.message || error,
+        'getProjectUsers'
+      );
+    }
+    return _.sortBy(users, ['username']);
+  }
+
+  async getProjectFolderList(): Promise<Array<ApiProjectFolderModel>> {
+    const folderList: Array<ApiProjectFolderModel> = [];
     await this.logsUtil.addLogs(
       'info',
       `Discovering project folder list`,
@@ -45,9 +70,9 @@ export class ApiUtil {
     return folderList;
   }
 
-  getProjectListDetail(projectList: any): ApiProjectFolder {
+  private getProjectListDetail(projectList: any): ApiProjectFolderModel {
     const statuses = [];
-    const lists: Array<ApiProjectFolder> = [];
+    const lists: Array<ApiProjectFolderModel> = [];
     for (const listObj of projectList.lists || []) {
       const projectList = this.getProjectListDetail(listObj);
       lists.push(projectList);

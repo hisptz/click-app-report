@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { ApiConfigModel } from '../models/api-config-model';
-import { ApiProjectFolder } from '../models/api-project-folder';
+import { ApiProjectFolderModel } from '../models/api-project-folder-model';
 import { ApiUtil } from '../utils/api-util';
 import { ClickUpReportUtil } from '../utils/click-report-util';
 import { ExcelUtil } from '../utils/excel-util';
@@ -41,6 +41,8 @@ export class AppProcess {
         'Preparing Tasks for report generation',
         'setAllTask'
       );
+      const users = await this.apiUtil.getProjectUsers();
+      console.log(users);
 
       //  const tasksObject = await this.excelUtil.getJsonDataFromExcelOrCsvFile();
       // this._tasks = _.flattenDeep(
