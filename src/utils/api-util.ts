@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import _, { parseInt } from 'lodash';
+import { completedDateColum } from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectFolderModel } from '../models/api-project-folder-model';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
@@ -52,27 +53,43 @@ export class ApiUtil {
             };
           })
         );
+        const completedDateCustomFieldObj = _.find(
+          taskObj.custom_fields || [],
+          (customField) => {
+            return (
+              customField &&
+              customField.name &&
+              completedDateColum.toLowerCase() ===
+                `${customField.name}`.toLowerCase()
+            );
+          }
+        );
         projectTasks.push({
           id: `${taskObj.id || ''}`,
           name: `${taskObj.name || ''}`,
           description: `${taskObj.description || ''}`,
           status: statusObj.status || ``,
           createdDate: taskObj.date_created
-            ? AppUtil.getFormattedDate(taskObj.date_created)
+            ? AppUtil.getFormattedDate(parseInt(taskObj.date_created, 10))
             : null,
           dueDate: taskObj.due_date
-            ? AppUtil.getFormattedDate(taskObj.due_date)
+            ? AppUtil.getFormattedDate(parseInt(taskObj.due_date, 10))
             : null,
           lastUpdatedDate: taskObj.date_updated
-            ? AppUtil.getFormattedDate(taskObj.date_updated)
+            ? AppUtil.getFormattedDate(parseInt(taskObj.date_updated, 10))
             : null,
           startDate: taskObj.start_date
-            ? AppUtil.getFormattedDate(taskObj.start_date)
+            ? AppUtil.getFormattedDate(parseInt(taskObj.start_date, 10))
             : null,
           closedDate: taskObj.date_closed
-            ? AppUtil.getFormattedDate(taskObj.date_closed)
+            ? AppUtil.getFormattedDate(parseInt(taskObj.date_closed, 10))
             : null,
-          completedDate: '',
+          completedDate:
+            completedDateCustomFieldObj && completedDateCustomFieldObj.value
+              ? AppUtil.getFormattedDate(
+                  parseInt(completedDateCustomFieldObj.value, 10)
+                )
+              : null,
           list: listObj.name || ``,
           assignees,
           project: projectObj.name || ``,
