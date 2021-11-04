@@ -5,7 +5,7 @@ export const openStatus = 'Open';
 export const inProgressStatus = 'in progress';
 export const allowedNumberOnReviewTasks = 4;
 export const taskClosedStatus = [closedStatus, reviewStatus];
-export const clickUpReportSourceColumns = {
+export const clickUpReportSourceColumns: any = {
   project: 'PROJECT',
   list: 'SUB PROJECT',
   assignee: 'ASSIGNEE',
@@ -13,7 +13,6 @@ export const clickUpReportSourceColumns = {
   status: 'STATUS',
   createdDate: 'CREATE DATE',
   dueDate: 'DUE DATE',
-  startDate: 'START DATE',
   lastUpdatedDate: 'LAST UPDATED DATE',
   completedDate: 'ON REVIEW DATE',
   closedDate: 'CLOSE DATE'

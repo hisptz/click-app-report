@@ -17,10 +17,7 @@ export class ClickUpReportUtil {
   }
 
   get sortedTasks(): any {
-    return _.sortBy(
-      _.sortBy(this._tasks, ['list']),
-      (task) => task.assignee.username || ''
-    );
+    return _.sortBy(this._tasks, (task) => task.assignee.username || '');
   }
 
   get tasksByAssignee(): any {
