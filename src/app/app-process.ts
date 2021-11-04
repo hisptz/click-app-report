@@ -34,15 +34,18 @@ export class AppProcess {
     return new Date(this._reportGeneratedDate);
   }
 
-  async setAllTask() {
+  async setAllTask(fromDueDateLimit: number, toDueDateLimit: number) {
     try {
       await this.logsUtil.addLogs(
         'info',
         'Preparing Tasks for report generation',
         'setAllTask'
       );
-      const users = await this.apiUtil.getProjectUsers();
-      console.log(users);
+      const tasks = await this.apiUtil.getProjectTasks(
+        fromDueDateLimit,
+        toDueDateLimit
+      );
+      console.log(tasks);
 
       //  const tasksObject = await this.excelUtil.getJsonDataFromExcelOrCsvFile();
       // this._tasks = _.flattenDeep(

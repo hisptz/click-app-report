@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectFolderModel } from '../models/api-project-folder-model';
+import { ApiProjectTaskModel } from '../models/api-project-task-model';
 import { ApiProjectUserModel } from '../models/api-project-user-model';
+import { AppUtil } from './app-util';
 import { HttpUtil } from './http-util';
 import { LogsUtil } from './logs-util';
 
@@ -22,8 +24,65 @@ export class ApiUtil {
     this.logsUtil = new LogsUtil();
   }
 
+  async getProjectTasks(
+    fromDueDateLimit: number,
+    toDueDateLimit: number
+  ): Promise<Array<ApiProjectTaskModel>> {
+    const projectTasks: Array<ApiProjectTaskModel> = [];
+    await this.logsUtil.addLogs(
+      'info',
+      `Discovering project folder list's tasks`,
+      'getProjectTasks'
+    );
+    try {
+      const url = `${this._baseUrl}/team/${this._teamId}/task?due_date_lt=${toDueDateLimit}&include_closed=true&due_date_gt=${fromDueDateLimit}&reverse=true`;
+      const response: any = await HttpUtil.getHttp(this._headers, url);
+      for (const taskObj of response.tasks || []) {
+        projectTasks.push({
+          id: `${taskObj.id || ''}`,
+          name: `${taskObj.name || ''}`,
+          description: `${taskObj.description || ''}`,
+          status: ``,
+          createdDate: taskObj.date_created
+            ? AppUtil.getFormattedDate(taskObj.date_created)
+            : null,
+          dueDate: taskObj.due_date
+            ? AppUtil.getFormattedDate(taskObj.due_date)
+            : null,
+          lastUpdatedDate: taskObj.date_updated
+            ? AppUtil.getFormattedDate(taskObj.date_updated)
+            : null,
+          startDate: taskObj.start_date
+            ? AppUtil.getFormattedDate(taskObj.start_date)
+            : null,
+          closedDate: taskObj.date_closed
+            ? AppUtil.getFormattedDate(taskObj.date_closed)
+            : null,
+          completedDate: '',
+          list: ``,
+          space: ``,
+          assignees: [],
+          project: ``,
+          folder: ``
+        });
+      }
+    } catch (error: any) {
+      await this.logsUtil.addLogs(
+        'error',
+        error.message || error,
+        'getProjectTasks'
+      );
+    }
+    return projectTasks;
+  }
+
   async getProjectUsers(): Promise<Array<ApiProjectUserModel>> {
     const users: Array<ApiProjectUserModel> = [];
+    await this.logsUtil.addLogs(
+      'info',
+      `Discovering project members list`,
+      'getProjectUsers'
+    );
     try {
       const url = `${this._baseUrl}/team/${this._teamId}`;
       const response: any = await HttpUtil.getHttp(this._headers, url);
