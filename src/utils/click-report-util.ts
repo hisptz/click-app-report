@@ -5,7 +5,8 @@ import {
   inProgressStatus,
   openStatus,
   reviewStatus,
-  taskClosedStatus
+  taskClosedStatus,
+  totalNumberOfHoursPerDay
 } from '../constants/click-up-excel-file-constant';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
 
@@ -73,6 +74,19 @@ export class ClickUpReportUtil {
     return _.filter(this._tasks || [], (task) =>
       taskClosedStatus.includes(task.status)
     ).length;
+  }
+
+  get totalHoursSpent(): string {
+    return _.sumBy(this._tasks, (task) => parseFloat(task.timeSpent)).toFixed(
+      1
+    );
+  }
+
+  get totalDaysSpent(): string {
+    return (
+      _.sumBy(this._tasks, (task) => parseFloat(task.timeSpent)) /
+      totalNumberOfHoursPerDay
+    ).toFixed(1);
   }
 
   get tasksCompletedOnTimeCount(): number {

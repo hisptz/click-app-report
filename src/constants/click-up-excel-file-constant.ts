@@ -4,6 +4,7 @@ export const closedStatus = 'Closed';
 export const openStatus = 'Open';
 export const inProgressStatus = 'in progress';
 export const allowedNumberOnReviewTasks = 4;
+export const totalNumberOfHoursPerDay = 8;
 export const taskClosedStatus = [closedStatus, reviewStatus];
 
 export const clickUpReportSourceColumns: any = {
