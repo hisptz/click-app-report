@@ -26,7 +26,7 @@ export class ClickUpReportUtil {
   }
 
   get sortedTasksByDate(): Array<ApiProjectTaskModel> {
-    return _.sortBy(this._tasks, (task) => task.lastUpdatedDate);
+    return _.sortBy(this._tasks, (task) => task.dueDate);
   }
 
   get tasksByAssignee(): any {

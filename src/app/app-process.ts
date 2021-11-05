@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import {
   clickUpReportSourceColumns,
-  taskClosedStatus,
-  timeSheetReportColumns
+  taskClosedStatus
 } from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
@@ -65,14 +64,40 @@ export class AppProcess {
     toDueDateLimit: number
   ) {
     try {
+      /**
+       * export const timeSheetReportColumns: any = {
+  dueDate: 'Date',
+  project: 'Section',
+  name: 'Activity Description',
+  timeSpent: 'No of Hours'
+};
+       */
+
       const fromDate = AppUtil.getFormattedDate(fromDueDateLimit);
       const toDate = AppUtil.getFormattedDate(toDueDateLimit);
+
       const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
       const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
       for (const assignee of _.keys(tasksByAssignee).sort()) {
+        const summaryJson: any[] = [
+          {
+            item1: ``
+          },
+          {
+            item1: `P O Box 31775 Dar Es Salaam`
+          },
+          {
+            item1: `Activities Monthly Timesheet from ${fromDate} to ${toDate}`
+          },
+          {
+            item1: `Date`,
+            item2: `Section`,
+            item3: `Activity Description`,
+            item4: `No of Hours`
+          }
+        ];
         const assigneeClickUpReportUtil = new ClickUpReportUtil(
-          tasksByAssignee[assignee],
-          timeSheetReportColumns
+          tasksByAssignee[assignee]
         );
         const tasks = _.filter(
           assigneeClickUpReportUtil.sortedTasksByDate,
@@ -80,11 +105,57 @@ export class AppProcess {
             return taskClosedStatus.includes(task.status);
           }
         );
-        const timeSheetReportUtil = new ClickUpReportUtil(
-          tasks,
-          timeSheetReportColumns
+        const timeSheetReportUtil = new ClickUpReportUtil(tasks);
+        for (const task of timeSheetReportUtil.sortedTasksByDate) {
+          summaryJson.push({
+            item1: task.dueDate,
+            item2: task.project,
+            item3: task.name,
+            item4: task.timeSpent
+          });
+        }
+        summaryJson.push(
+          {
+            item1: ``,
+            item2: ``,
+            item3: `Total Hours`,
+            item4: ``
+          },
+          {
+            item1: ``,
+            item2: ``,
+            item3: `Total Number of Days`,
+            item4: ``
+          },
+          { item1: '' },
+          {
+            item1: `Submitted By:`,
+            item2: `${assignee}`,
+            item3: ``,
+            item4: ``
+          },
+          {
+            item1: ``,
+            item2: ``,
+            item3: `I certify that the time reported on this time sheet is accurate and complete to the best of my knowledge`,
+            item4: ``
+          },
+          {
+            item1: `Approved By:`,
+            item2: ``,
+            item3: ``,
+            item4: ``
+          },
+          {
+            item1: ``,
+            item2: ``,
+            item3: `I have reviewed this time sheet and certify that it is accurate and complete to the best of my knowledge`,
+            item4: ``
+          }
         );
-        console.log(timeSheetReportUtil.toExcelJson);
+        await new ExcelUtil(
+          `[${assignee}]Timesheet`
+        ).writeToSingleSheetExcelFile(summaryJson, true);
       }
     } catch (error: any) {
       await this.logsUtil.addLogs(
