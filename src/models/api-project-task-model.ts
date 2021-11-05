@@ -6,13 +6,13 @@ export interface ApiProjectTaskModel {
   description: string;
   status: string;
   createdDate: string;
-  dueDate: string | null;
+  dueDate: string;
   lastUpdatedDate: string | null;
   startDate: string | null;
   closedDate: string | null;
   completedDate: string | null;
   list: string;
-  timeSpent :string;
+  timeSpent: string;
   assignee: ApiProjectUserModel;
   project?: string;
   folder?: string;

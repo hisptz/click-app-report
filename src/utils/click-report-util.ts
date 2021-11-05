@@ -116,7 +116,9 @@ export class ClickUpReportUtil {
         const formttedTaskObj: any = {};
         for (var key of _.keys(this._excelJsonConfig)) {
           const column = this._excelJsonConfig[key];
-          formttedTaskObj[column] = taskObj[key] || '';
+          if (taskObj[key]) {
+            formttedTaskObj[column] = taskObj[key] || '';
+          }
         }
         return formttedTaskObj;
       })

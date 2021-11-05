@@ -65,7 +65,9 @@ export class ApiUtil {
               : '',
             dueDate: taskObj.due_date
               ? AppUtil.getFormattedDate(parseInt(taskObj.due_date, 10))
-              : null,
+              : taskObj.date_created
+              ? AppUtil.getFormattedDate(parseInt(taskObj.date_created, 10))
+              : '',
             lastUpdatedDate: taskObj.date_updated
               ? AppUtil.getFormattedDate(parseInt(taskObj.date_updated, 10))
               : null,
@@ -81,7 +83,9 @@ export class ApiUtil {
                     parseInt(completedDateCustomFieldObj.value, 10)
                   )
                 : null,
-            timeSpent : AppUtil.getNumberOfHoursSpent(parseInt(taskObj.time_spent || '0', 10)),
+            timeSpent: AppUtil.getNumberOfHoursSpent(
+              parseInt(taskObj.time_spent || '0', 10)
+            ),
             list: listObj.name || ``,
             assignee: {
               id: user.id || '',

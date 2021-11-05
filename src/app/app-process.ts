@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import {
   clickUpReportSourceColumns,
-  taskClosedStatus
+  taskClosedStatus,
+  timeSheetReportColumns
 } from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
@@ -70,16 +71,19 @@ export class AppProcess {
       const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
       for (const assignee of _.keys(tasksByAssignee).sort()) {
         const assigneeClickUpReportUtil = new ClickUpReportUtil(
-          tasksByAssignee[assignee]
+          tasksByAssignee[assignee],
+          timeSheetReportColumns
         );
         const tasks = _.filter(
           assigneeClickUpReportUtil.sortedTasksByDate,
           (task) => {
-            console.log({time : task.timeSpent})
             return taskClosedStatus.includes(task.status);
           }
         );
-        const timeSheetReportUtil = new ClickUpReportUtil(tasks);
+        const timeSheetReportUtil = new ClickUpReportUtil(
+          tasks,
+          timeSheetReportColumns
+        );
         console.log(timeSheetReportUtil.toExcelJson);
       }
     } catch (error: any) {
