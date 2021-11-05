@@ -1,4 +1,8 @@
 export class AppUtil {
+  static getNumberOfHoursSpent(milliseconds: number) {
+    return (milliseconds / (1000 * 60 * 60)).toFixed(1);
+  }
+
   static getStartEndDateLimit() {
     const today = this.getFormattedDate(new Date());
     const lastSevenDay = this.getFormattedDate(
