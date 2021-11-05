@@ -3,3 +3,4 @@
 dist
 resources
 node_modules
+src/configs/api-config.ts
