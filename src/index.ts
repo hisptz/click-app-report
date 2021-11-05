@@ -14,8 +14,8 @@ async function starApp() {
     await logsUtil.clearLogs();
     await logsUtil.addLogs('info', 'start an app', 'app');
     await appProcess.setAllTask(fromDueDateLimit, toDueDateLimit);
-    //await appProcess.generateTaskSummary(fromDueDateLimit, toDueDateLimit);
-    //await appProcess.generateSourceReportFile();
+    await appProcess.generateTaskSummary(fromDueDateLimit, toDueDateLimit);
+    await appProcess.generateSourceReportFile();
     await appProcess.generateTimeSheetForIndividual(
       fromDueDateLimit,
       toDueDateLimit

@@ -38,6 +38,11 @@ export class ApiUtil {
     try {
       const url = `${this._baseUrl}/team/${this._teamId}/task?due_date_lt=${toDueDateLimit}&include_closed=true&due_date_gt=${fromDueDateLimit}&reverse=true`;
       const response: any = await HttpUtil.getHttp(this._headers, url);
+      await this.logsUtil.addLogs(
+        'info',
+        `Formatting discovered project folder list's tasks`,
+        'getProjectTasks'
+      );
       for (const taskObj of response.tasks || []) {
         const projectObj = taskObj.project || {};
         const folderObj = taskObj.folder || {};

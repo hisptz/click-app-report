@@ -59,113 +59,6 @@ export class AppProcess {
     }
   }
 
-  async generateTimeSheetForIndividual(
-    fromDueDateLimit: number,
-    toDueDateLimit: number
-  ) {
-    try {
-      /**
-       * export const timeSheetReportColumns: any = {
-  dueDate: 'Date',
-  project: 'Section',
-  name: 'Activity Description',
-  timeSpent: 'No of Hours'
-};
-       */
-
-      const fromDate = AppUtil.getFormattedDate(fromDueDateLimit);
-      const toDate = AppUtil.getFormattedDate(toDueDateLimit);
-
-      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
-      const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
-      for (const assignee of _.keys(tasksByAssignee).sort()) {
-        const summaryJson: any[] = [
-          {
-            item1: ``
-          },
-          {
-            item1: `P O Box 31775 Dar Es Salaam`
-          },
-          {
-            item1: `Activities Monthly Timesheet from ${fromDate} to ${toDate}`
-          },
-          {
-            item1: `Date`,
-            item2: `Section`,
-            item3: `Activity Description`,
-            item4: `No of Hours`
-          }
-        ];
-        const assigneeClickUpReportUtil = new ClickUpReportUtil(
-          tasksByAssignee[assignee]
-        );
-        const tasks = _.filter(
-          assigneeClickUpReportUtil.sortedTasksByDate,
-          (task) => {
-            return taskClosedStatus.includes(task.status);
-          }
-        );
-        const timeSheetReportUtil = new ClickUpReportUtil(tasks);
-        for (const task of timeSheetReportUtil.sortedTasksByDate) {
-          summaryJson.push({
-            item1: task.dueDate,
-            item2: task.project,
-            item3: task.name,
-            item4: task.timeSpent
-          });
-        }
-        summaryJson.push(
-          {
-            item1: ``,
-            item2: ``,
-            item3: `Total Hours`,
-            item4: ``
-          },
-          {
-            item1: ``,
-            item2: ``,
-            item3: `Total Number of Days`,
-            item4: ``
-          },
-          { item1: '' },
-          {
-            item1: `Submitted By:`,
-            item2: `${assignee}`,
-            item3: ``,
-            item4: ``
-          },
-          {
-            item1: ``,
-            item2: ``,
-            item3: `I certify that the time reported on this time sheet is accurate and complete to the best of my knowledge`,
-            item4: ``
-          },
-          {
-            item1: `Approved By:`,
-            item2: ``,
-            item3: ``,
-            item4: ``
-          },
-          {
-            item1: ``,
-            item2: ``,
-            item3: `I have reviewed this time sheet and certify that it is accurate and complete to the best of my knowledge`,
-            item4: ``
-          }
-        );
-        await new ExcelUtil(
-          `[${assignee}]Timesheet`
-        ).writeToSingleSheetExcelFile(summaryJson, true);
-      }
-    } catch (error: any) {
-      await this.logsUtil.addLogs(
-        'error',
-        error.message || error,
-        'generateTimeSheetForIndividual'
-      );
-    }
-  }
-
   async generateSourceReportFile() {
     try {
       const clickUpReportUtil = new ClickUpReportUtil(
@@ -208,6 +101,118 @@ export class AppProcess {
         'generateTaskSummary'
       );
     }
+  }
+
+  async generateTimeSheetForIndividual(
+    fromDueDateLimit: number,
+    toDueDateLimit: number
+  ) {
+    try {
+      await this.logsUtil.addLogs(
+        'error',
+        `Generating Team time sheets`,
+        'generateTimeSheetForIndividual'
+      );
+      const fromDate = AppUtil.getFormattedDate(fromDueDateLimit);
+      const toDate = AppUtil.getFormattedDate(toDueDateLimit);
+      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
+      const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
+      for (const assignee of _.keys(tasksByAssignee).sort()) {
+        const summaryJson: any[] = this.getIndividualTimeSheetSummary(
+          fromDate,
+          toDate,
+          tasksByAssignee,
+          assignee
+        );
+        await new ExcelUtil(
+          `[${assignee}]Timesheet`
+        ).writeToSingleSheetExcelFile(summaryJson, true);
+      }
+    } catch (error: any) {
+      await this.logsUtil.addLogs(
+        'error',
+        error.message || error,
+        'generateTimeSheetForIndividual'
+      );
+    }
+  }
+
+  getIndividualTimeSheetSummary(
+    fromDate: string,
+    toDate: string,
+    tasksByAssignee: any,
+    assignee: string
+  ) {
+    const summaryJson: any[] = [
+      {
+        item1: ``
+      },
+      {
+        item1: `P O Box 31775 Dar Es Salaam`
+      },
+      {
+        item1: `Activities Monthly Timesheet from ${fromDate} to ${toDate}`
+      },
+      {
+        item1: `Date`,
+        item2: `Section`,
+        item3: `Activity Description`,
+        item4: `No of Hours`
+      }
+    ];
+    const tasks = _.filter(
+      new ClickUpReportUtil(tasksByAssignee[assignee]).sortedTasksByDate,
+      (task) => taskClosedStatus.includes(task.status)
+    );
+    const timeSheetReportUtil = new ClickUpReportUtil(tasks);
+    for (const task of timeSheetReportUtil.sortedTasksByDate) {
+      summaryJson.push({
+        item1: task.dueDate,
+        item2: task.project,
+        item3: task.name,
+        item4: task.timeSpent
+      });
+    }
+    summaryJson.push(
+      {
+        item1: ``,
+        item2: ``,
+        item3: `Total Hours`,
+        item4: `${timeSheetReportUtil.totalHoursSpent}`
+      },
+      {
+        item1: ``,
+        item2: ``,
+        item3: `Total Number of Days`,
+        item4: `${timeSheetReportUtil.totalDaysSpent}`
+      },
+      { item1: '' },
+      {
+        item1: `Submitted By:`,
+        item2: `${assignee}`,
+        item3: ``,
+        item4: ``
+      },
+      {
+        item1: ``,
+        item2: ``,
+        item3: `I certify that the time reported on this time sheet is accurate and complete to the best of my knowledge`,
+        item4: ``
+      },
+      {
+        item1: `Approved By:`,
+        item2: ``,
+        item3: ``,
+        item4: ``
+      },
+      {
+        item1: ``,
+        item2: ``,
+        item3: `I have reviewed this time sheet and certify that it is accurate and complete to the best of my knowledge`,
+        item4: ``
+      }
+    );
+    return summaryJson;
   }
 
   overallTaskSummary(fromDate: string, toDate: string): any {
