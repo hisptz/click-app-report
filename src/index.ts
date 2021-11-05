@@ -1,13 +1,13 @@
 import { LogsUtil } from './utils/logs-util';
 import { AppProcess } from './app/app-process';
 import { apiConfig } from './configs/api-config';
+import { AppUtil } from './utils/app-util';
 
 starApp();
 
 async function starApp() {
   try {
-    const fromDueDateLimit = new Date('2021-11-03').getTime();
-    const toDueDateLimit = new Date('2021-11-04').getTime();
+    const { fromDueDateLimit, toDueDateLimit } = AppUtil.getStartEndDateLimit();
     const reportGeneratedDate = new Date();
     const appProcess = new AppProcess(apiConfig, reportGeneratedDate);
     const logsUtil = new LogsUtil();
