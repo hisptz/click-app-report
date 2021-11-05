@@ -11,13 +11,22 @@ import { ApiProjectTaskModel } from '../models/api-project-task-model';
 
 export class ClickUpReportUtil {
   private _tasks: Array<ApiProjectTaskModel>;
+  private _excelJsonConfig: any;
 
-  constructor(tasks: Array<ApiProjectTaskModel> = []) {
+  constructor(
+    tasks: Array<ApiProjectTaskModel> = [],
+    excelJsonConfig: any = {}
+  ) {
+    this._excelJsonConfig = excelJsonConfig;
     this._tasks = tasks;
   }
 
-  get sortedTasks(): any {
+  get sortedTasksByName(): Array<ApiProjectTaskModel> {
     return _.sortBy(this._tasks, (task) => task.assignee.username || '');
+  }
+
+  get sortedTasksByDate(): Array<ApiProjectTaskModel> {
+    return _.sortBy(this._tasks, (task) => task.lastUpdatedDate);
   }
 
   get tasksByAssignee(): any {
@@ -94,6 +103,24 @@ export class ClickUpReportUtil {
       }).length;
     } catch (error) {}
     return count;
+  }
+
+  get toExcelJson(): any {
+    return _.flattenDeep(
+      _.map(this.sortedTasksByName, (task: ApiProjectTaskModel) => {
+        const taskObj: any = {
+          ...{},
+          ...task,
+          assignee: task.assignee.username || ''
+        };
+        const formttedTaskObj: any = {};
+        for (var key of _.keys(this._excelJsonConfig)) {
+          const column = this._excelJsonConfig[key];
+          formttedTaskObj[column] = taskObj[key] || '';
+        }
+        return formttedTaskObj;
+      })
+    );
   }
 
   get totalTasks(): number {

@@ -14,7 +14,12 @@ async function starApp() {
     await logsUtil.clearLogs();
     await logsUtil.addLogs('info', 'start an app', 'app');
     await appProcess.setAllTask(fromDueDateLimit, toDueDateLimit);
-    await appProcess.generateTaskSummary(fromDueDateLimit, toDueDateLimit);
+    //await appProcess.generateTaskSummary(fromDueDateLimit, toDueDateLimit);
+    await appProcess.generateSourceReportFile();
+    await appProcess.generateTimeSheetForIndividual(
+      fromDueDateLimit,
+      toDueDateLimit
+    );
     await logsUtil.addLogs('info', 'End of script', 'app');
   } catch (error: any) {
     error = error.message || error;

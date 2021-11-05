@@ -1,5 +1,8 @@
 import _ from 'lodash';
-import { clickUpReportSourceColumns } from '../constants/click-up-excel-file-constant';
+import {
+  clickUpReportSourceColumns,
+  taskClosedStatus
+} from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
 import { ApiUtil } from '../utils/api-util';
@@ -56,6 +59,57 @@ export class AppProcess {
     }
   }
 
+  async generateTimeSheetForIndividual(
+    fromDueDateLimit: number,
+    toDueDateLimit: number
+  ) {
+    try {
+      const fromDate = AppUtil.getFormattedDate(fromDueDateLimit);
+      const toDate = AppUtil.getFormattedDate(toDueDateLimit);
+      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
+      const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
+      for (const assignee of _.keys(tasksByAssignee).sort()) {
+        const assigneeClickUpReportUtil = new ClickUpReportUtil(
+          tasksByAssignee[assignee]
+        );
+        const tasks = _.filter(
+          assigneeClickUpReportUtil.sortedTasksByDate,
+          (task) => {
+            console.log({time : task.timeSpent})
+            return taskClosedStatus.includes(task.status);
+          }
+        );
+        const timeSheetReportUtil = new ClickUpReportUtil(tasks);
+        console.log(timeSheetReportUtil.toExcelJson);
+      }
+    } catch (error: any) {
+      await this.logsUtil.addLogs(
+        'error',
+        error.message || error,
+        'generateTimeSheetForIndividual'
+      );
+    }
+  }
+
+  async generateSourceReportFile() {
+    try {
+      const clickUpReportUtil = new ClickUpReportUtil(
+        this._tasks,
+        clickUpReportSourceColumns
+      );
+      await new ExcelUtil(this._clickUpReportFile).writeToSingleSheetExcelFile(
+        clickUpReportUtil.toExcelJson,
+        false
+      );
+    } catch (error: any) {
+      await this.logsUtil.addLogs(
+        'error',
+        error.message || error,
+        'generateTaskSummary'
+      );
+    }
+  }
+
   async generateTaskSummary(fromDueDateLimit: number, toDueDateLimit: number) {
     try {
       const fromDate = AppUtil.getFormattedDate(fromDueDateLimit);
@@ -72,30 +126,11 @@ export class AppProcess {
         jsonDataObject,
         true
       );
-      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
-      await new ExcelUtil(this._clickUpReportFile).writeToSingleSheetExcelFile(
-        _.flattenDeep(
-          _.map(clickUpReportUtil.sortedTasks, (task: ApiProjectTaskModel) => {
-            const taskObj: any = {
-              ...{},
-              ...task,
-              assignee: task.assignee.username || ''
-            };
-            const formttedTaskObj: any = {};
-            for (var key of _.keys(clickUpReportSourceColumns)) {
-              const column = clickUpReportSourceColumns[key];
-              formttedTaskObj[column] = taskObj[key] || '';
-            }
-            return formttedTaskObj;
-          })
-        ),
-        false
-      );
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
         error.message || error,
-        'setAllTask'
+        'generateTaskSummary'
       );
     }
   }

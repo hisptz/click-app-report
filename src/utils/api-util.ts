@@ -81,6 +81,7 @@ export class ApiUtil {
                     parseInt(completedDateCustomFieldObj.value, 10)
                   )
                 : null,
+            timeSpent : AppUtil.getNumberOfHoursSpent(parseInt(taskObj.time_spent || '0', 10)),
             list: listObj.name || ``,
             assignee: {
               id: user.id || '',

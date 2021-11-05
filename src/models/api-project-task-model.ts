@@ -12,6 +12,7 @@ export interface ApiProjectTaskModel {
   closedDate: string | null;
   completedDate: string | null;
   list: string;
+  timeSpent :string;
   assignee: ApiProjectUserModel;
   project?: string;
   folder?: string;
