@@ -59,6 +59,7 @@ export class ApiUtil {
             );
           }
         );
+        //@TODO getting project codes
         for (const user of taskObj.assignees || []) {
           projectTasks.push({
             id: `${taskObj.id || ''}`,
@@ -97,6 +98,7 @@ export class ApiUtil {
               username: user.username || '',
               email: user.email || ''
             },
+            projectCode : projectObj.name || ``,
             project: projectObj.name || ``,
             folder: folderObj.name || ``
           });

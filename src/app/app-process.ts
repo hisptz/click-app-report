@@ -168,7 +168,7 @@ export class AppProcess {
     for (const task of timeSheetReportUtil.sortedTasksByDate) {
       summaryJson.push({
         item1: task.dueDate,
-        item2: task.project,
+        item2: task.projectCode,
         item3: task.name,
         item4: task.timeSpent
       });
