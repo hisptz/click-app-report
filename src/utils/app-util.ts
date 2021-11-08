@@ -1,52 +1,36 @@
 export class AppUtil {
-  static getTaskDate(date: any, reportGeneratedDate: Date = new Date()) {
-    let taskDate = '';
+  static getStartEndDateLimit() {
+    const today = this.getFormattedDate(new Date());
+    const lastSevenDay = this.getFormattedDate(
+      new Date(new Date().setDate(new Date().getDate() - 7))
+    );
+    let fromDueDateLimit = new Date(lastSevenDay).getTime();
+    let toDueDateLimit = new Date(today).getTime();
     try {
-      if (typeof date == 'string' && date.includes('/')) {
-        const dateArray = date.split('/');
-        if (dateArray.length > 2) {
-          const year = new Date().getFullYear();
-          const month = parseInt(dateArray[0], 10);
-          const day = parseInt(dateArray[1], 10);
-          const newDate =
-            year +
-            (month > 9 ? `-${month}` : `-0${month}`) +
-            (day > 9 ? `-${day}` : `-0${day}`);
-          taskDate = this.getFormattedDate(newDate);
-        }
-      } else if (typeof date == 'string' && date.includes('Today')) {
-        taskDate = this.getFormattedDate(reportGeneratedDate);
-      } else if (typeof date == 'string' && date.includes('days ago')) {
-        const numberOfdays = parseInt(date.split(' ')[0] ?? '0', 10);
-        taskDate = this.getFormattedDate(
-          new Date(
-            reportGeneratedDate.setDate(
-              reportGeneratedDate.getDate() - numberOfdays
-            )
-          )
-        );
-      } else {
-        taskDate = this.getExcelDateToJSDate(date);
+      const parameters = process.argv;
+      const fromIndex = 2;
+      const toIndex = 3;
+      if (parameters[fromIndex] && parameters[toIndex]) {
+        fromDueDateLimit =
+          new Date(parameters[fromIndex]) <= new Date(parameters[toIndex])
+            ? new Date(parameters[fromIndex]).getTime()
+            : new Date(parameters[toIndex]).getTime();
+        toDueDateLimit =
+          new Date(parameters[fromIndex]) <= new Date(parameters[toIndex])
+            ? new Date(parameters[toIndex]).getTime()
+            : new Date(parameters[fromIndex]).getTime();
+      } else if (parameters[fromIndex]) {
+        fromDueDateLimit =
+          new Date(parameters[fromIndex]) <= new Date()
+            ? new Date(parameters[fromIndex]).getTime()
+            : toDueDateLimit;
+        toDueDateLimit =
+          new Date(parameters[fromIndex]) <= new Date()
+            ? toDueDateLimit
+            : new Date(parameters[fromIndex]).getTime();
       }
     } catch (error) {}
-    return taskDate;
-  }
-
-  static getExcelDateToJSDate(date: any) {
-    let excelDate = '';
-    const dateArray = this.getFormattedDate(
-      new Date(Math.round((date - 25569) * 86400 * 1000))
-    ).split('-');
-    if (dateArray.length > 2) {
-      const year = parseInt(dateArray[0], 10);
-      const month = parseInt(dateArray[2], 10);
-      const day = parseInt(dateArray[1], 10);
-      excelDate =
-        year +
-        (month > 9 ? `-${month}` : `-0${month}`) +
-        (day > 9 ? `-${day}` : `-0${day}`);
-    }
-    return excelDate;
+    return { fromDueDateLimit, toDueDateLimit };
   }
 
   static getFormattedDate(date: any) {
