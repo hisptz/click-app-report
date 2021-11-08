@@ -1,5 +1,8 @@
 import _, { parseInt } from 'lodash';
-import { completedDateColum } from '../constants/click-up-excel-file-constant';
+import {
+  codesToProjectMapping,
+  completedDateColum
+} from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectFolderModel } from '../models/api-project-folder-model';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
@@ -25,6 +28,16 @@ export class ApiUtil {
     this.logsUtil = new LogsUtil();
   }
 
+  getProjectCode(projectCode: string): string {
+    for (const code of _.keys(codesToProjectMapping)) {
+      const projectCodes = codesToProjectMapping[code] || [];
+      if (projectCodes.includes(projectCode)) {
+        projectCode = code;
+      }
+    }
+    return projectCode;
+  }
+
   async getProjectTasks(
     fromDueDateLimit: number,
     toDueDateLimit: number
@@ -38,6 +51,11 @@ export class ApiUtil {
     try {
       const url = `${this._baseUrl}/team/${this._teamId}/task?due_date_lt=${toDueDateLimit}&include_closed=true&due_date_gt=${fromDueDateLimit}&reverse=true`;
       const response: any = await HttpUtil.getHttp(this._headers, url);
+      await this.logsUtil.addLogs(
+        'info',
+        `Formatting discovered project folder list's tasks`,
+        'getProjectTasks'
+      );
       for (const taskObj of response.tasks || []) {
         const projectObj = taskObj.project || {};
         const folderObj = taskObj.folder || {};
@@ -65,7 +83,9 @@ export class ApiUtil {
               : '',
             dueDate: taskObj.due_date
               ? AppUtil.getFormattedDate(parseInt(taskObj.due_date, 10))
-              : null,
+              : taskObj.date_created
+              ? AppUtil.getFormattedDate(parseInt(taskObj.date_created, 10))
+              : '',
             lastUpdatedDate: taskObj.date_updated
               ? AppUtil.getFormattedDate(parseInt(taskObj.date_updated, 10))
               : null,
@@ -81,12 +101,16 @@ export class ApiUtil {
                     parseInt(completedDateCustomFieldObj.value, 10)
                   )
                 : null,
+            timeSpent: AppUtil.getNumberOfHoursSpent(
+              parseInt(taskObj.time_spent || '0', 10)
+            ),
             list: listObj.name || ``,
             assignee: {
               id: user.id || '',
               username: user.username || '',
               email: user.email || ''
             },
+            projectCode: this.getProjectCode(projectObj.name || ``),
             project: projectObj.name || ``,
             folder: folderObj.name || ``
           });

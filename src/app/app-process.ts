@@ -1,5 +1,8 @@
 import _ from 'lodash';
-import { clickUpReportSourceColumns } from '../constants/click-up-excel-file-constant';
+import {
+  clickUpReportSourceColumns,
+  taskClosedStatus
+} from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
 import { ApiUtil } from '../utils/api-util';
@@ -56,6 +59,25 @@ export class AppProcess {
     }
   }
 
+  async generateSourceReportFile() {
+    try {
+      const clickUpReportUtil = new ClickUpReportUtil(
+        this._tasks,
+        clickUpReportSourceColumns
+      );
+      await new ExcelUtil(this._clickUpReportFile).writeToSingleSheetExcelFile(
+        clickUpReportUtil.toExcelJson,
+        false
+      );
+    } catch (error: any) {
+      await this.logsUtil.addLogs(
+        'error',
+        error.message || error,
+        'generateTaskSummary'
+      );
+    }
+  }
+
   async generateTaskSummary(fromDueDateLimit: number, toDueDateLimit: number) {
     try {
       const fromDate = AppUtil.getFormattedDate(fromDueDateLimit);
@@ -72,32 +94,125 @@ export class AppProcess {
         jsonDataObject,
         true
       );
-      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
-      await new ExcelUtil(this._clickUpReportFile).writeToSingleSheetExcelFile(
-        _.flattenDeep(
-          _.map(clickUpReportUtil.sortedTasks, (task: ApiProjectTaskModel) => {
-            const taskObj: any = {
-              ...{},
-              ...task,
-              assignee: task.assignee.username || ''
-            };
-            const formttedTaskObj: any = {};
-            for (var key of _.keys(clickUpReportSourceColumns)) {
-              const column = clickUpReportSourceColumns[key];
-              formttedTaskObj[column] = taskObj[key] || '';
-            }
-            return formttedTaskObj;
-          })
-        ),
-        false
-      );
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
         error.message || error,
-        'setAllTask'
+        'generateTaskSummary'
       );
     }
+  }
+
+  async generateTimeSheetForIndividual(
+    fromDueDateLimit: number,
+    toDueDateLimit: number
+  ) {
+    try {
+      await this.logsUtil.addLogs(
+        'error',
+        `Generating Team time sheets`,
+        'generateTimeSheetForIndividual'
+      );
+      const fromDate = AppUtil.getTimeSheetDate(fromDueDateLimit);
+      const toDate = AppUtil.getTimeSheetDate(toDueDateLimit);
+      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
+      const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
+      for (const assignee of _.keys(tasksByAssignee).sort()) {
+        const summaryJson: any[] = this.getIndividualTimeSheetSummary(
+          fromDate,
+          toDate,
+          tasksByAssignee,
+          assignee
+        );
+        await new ExcelUtil(
+          `[${assignee}]Timesheet`
+        ).writeToSingleSheetExcelFile(summaryJson, true);
+      }
+    } catch (error: any) {
+      await this.logsUtil.addLogs(
+        'error',
+        error.message || error,
+        'generateTimeSheetForIndividual'
+      );
+    }
+  }
+
+  getIndividualTimeSheetSummary(
+    fromDate: string,
+    toDate: string,
+    tasksByAssignee: any,
+    assignee: string
+  ) {
+    const summaryJson: any[] = [
+      {
+        item1: ``
+      },
+      {
+        item1: `P O Box 31775 Dar Es Salaam`
+      },
+      {
+        item1: `Activities Monthly Timesheet from ${fromDate} to ${toDate}`
+      },
+      {
+        item1: `Date`,
+        item2: `Section`,
+        item3: `Activity Description`,
+        item4: `No of Hours`
+      }
+    ];
+    const tasks = _.filter(
+      new ClickUpReportUtil(tasksByAssignee[assignee]).sortedTasksByDate,
+      (task) => taskClosedStatus.includes(task.status)
+    );
+    const timeSheetReportUtil = new ClickUpReportUtil(tasks);
+    for (const task of timeSheetReportUtil.sortedTasksByDate) {
+      summaryJson.push({
+        item1: AppUtil.getTimeSheetDate(task.dueDate),
+        item2: task.projectCode,
+        item3: task.name,
+        item4: task.timeSpent
+      });
+    }
+    summaryJson.push(
+      {
+        item1: ``,
+        item2: ``,
+        item3: `Total Hours`,
+        item4: `${timeSheetReportUtil.totalHoursSpent}`
+      },
+      {
+        item1: ``,
+        item2: ``,
+        item3: `Total Number of Days`,
+        item4: `${timeSheetReportUtil.totalDaysSpent}`
+      },
+      { item1: '' },
+      {
+        item1: `Submitted By:`,
+        item2: `${assignee}`,
+        item3: ``,
+        item4: ``
+      },
+      {
+        item1: ``,
+        item2: ``,
+        item3: `I certify that the time reported on this time sheet is accurate and complete to the best of my knowledge`,
+        item4: ``
+      },
+      {
+        item1: `Approved By:`,
+        item2: ``,
+        item3: ``,
+        item4: ``
+      },
+      {
+        item1: ``,
+        item2: ``,
+        item3: `I have reviewed this time sheet and certify that it is accurate and complete to the best of my knowledge`,
+        item4: ``
+      }
+    );
+    return summaryJson;
   }
 
   overallTaskSummary(fromDate: string, toDate: string): any {
