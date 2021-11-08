@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export class AppUtil {
   static getNumberOfHoursSpent(milliseconds: number) {
     return (milliseconds / (1000 * 60 * 60)).toFixed(1);
@@ -50,5 +52,13 @@ export class AppUtil {
       (month > 9 ? `-${month}` : `-0${month}`) +
       (day > 9 ? `-${day}` : `-0${day}`)
     );
+  }
+
+  static getTimeSheetDate(date: any): string {
+    let dateObject = new Date(date);
+    if (isNaN(dateObject.getDate())) {
+      dateObject = new Date();
+    }
+    return moment(dateObject).format('D MMMM YYYY');
   }
 }

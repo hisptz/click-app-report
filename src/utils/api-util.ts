@@ -1,5 +1,8 @@
 import _, { parseInt } from 'lodash';
-import { codesToProjectMapping, completedDateColum } from '../constants/click-up-excel-file-constant';
+import {
+  codesToProjectMapping,
+  completedDateColum
+} from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectFolderModel } from '../models/api-project-folder-model';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
@@ -25,15 +28,14 @@ export class ApiUtil {
     this.logsUtil = new LogsUtil();
   }
 
-
-  getProjectCode(projectCode :string):string{
-      for(const code of _.keys(codesToProjectMapping)){
-        const projectCodes = codesToProjectMapping[code] || []
-        if(projectCodes.includes(projectCode)){
-          projectCode = code;
-        }
+  getProjectCode(projectCode: string): string {
+    for (const code of _.keys(codesToProjectMapping)) {
+      const projectCodes = codesToProjectMapping[code] || [];
+      if (projectCodes.includes(projectCode)) {
+        projectCode = code;
       }
-      return projectCode;
+    }
+    return projectCode;
   }
 
   async getProjectTasks(
