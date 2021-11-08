@@ -113,8 +113,8 @@ export class AppProcess {
         `Generating Team time sheets`,
         'generateTimeSheetForIndividual'
       );
-      const fromDate = AppUtil.getFormattedDate(fromDueDateLimit);
-      const toDate = AppUtil.getFormattedDate(toDueDateLimit);
+      const fromDate = AppUtil.getTimeSheetDate(fromDueDateLimit);
+      const toDate = AppUtil.getTimeSheetDate(toDueDateLimit);
       const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
       const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
       for (const assignee of _.keys(tasksByAssignee).sort()) {
@@ -167,7 +167,7 @@ export class AppProcess {
     const timeSheetReportUtil = new ClickUpReportUtil(tasks);
     for (const task of timeSheetReportUtil.sortedTasksByDate) {
       summaryJson.push({
-        item1: task.dueDate,
+        item1: AppUtil.getTimeSheetDate(task.dueDate),
         item2: task.projectCode,
         item3: task.name,
         item4: task.timeSpent
