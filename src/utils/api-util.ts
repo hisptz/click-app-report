@@ -98,7 +98,7 @@ export class ApiUtil {
               username: user.username || '',
               email: user.email || ''
             },
-            projectCode : projectObj.name || ``,
+            projectCode: projectObj.name || ``,
             project: projectObj.name || ``,
             folder: folderObj.name || ``
           });

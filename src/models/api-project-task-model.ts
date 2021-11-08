@@ -14,7 +14,7 @@ export interface ApiProjectTaskModel {
   list: string;
   timeSpent: string;
   assignee: ApiProjectUserModel;
-  projectCode:string;
+  projectCode: string;
   project?: string;
   folder?: string;
 }
