@@ -1,5 +1,5 @@
 import _, { parseInt } from 'lodash';
-import { completedDateColum } from '../constants/click-up-excel-file-constant';
+import { codesToProjectMapping, completedDateColum } from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectFolderModel } from '../models/api-project-folder-model';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
@@ -23,6 +23,17 @@ export class ApiUtil {
       Authorization: apiConfig.authorizationKey
     };
     this.logsUtil = new LogsUtil();
+  }
+
+
+  getProjectCode(projectCode :string):string{
+      for(const code of _.keys(codesToProjectMapping)){
+        const projectCodes = codesToProjectMapping[code] || []
+        if(projectCodes.includes(projectCode)){
+          projectCode = code;
+        }
+      }
+      return projectCode;
   }
 
   async getProjectTasks(
@@ -59,7 +70,6 @@ export class ApiUtil {
             );
           }
         );
-        //@TODO getting project codes
         for (const user of taskObj.assignees || []) {
           projectTasks.push({
             id: `${taskObj.id || ''}`,
@@ -98,7 +108,7 @@ export class ApiUtil {
               username: user.username || '',
               email: user.email || ''
             },
-            projectCode: projectObj.name || ``,
+            projectCode: this.getProjectCode(projectObj.name || ``),
             project: projectObj.name || ``,
             folder: folderObj.name || ``
           });
