@@ -30,9 +30,9 @@ export const codesToProjectMapping: any = {
   'EGPAF/03/2021': [],
   'STC/04/2021': [],
   'KBL/05/2021': ['USAID KB'],
-  'ZNZLLIN/06/2021': ['Gidehouse LLP'],
+  'JHU-CK/07/2021': ['Chandarua Klinik Dashboard'],
   'JHU/07/2021': [],
-  'MDH/08/2021': ['Zanzibar support (MDH)']
+  'MDH-POE/08/2021': ['Zanzibar POE System (MDH)']
 };
 
 export const clickUpReportSourceColumns: any = {
