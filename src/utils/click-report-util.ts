@@ -35,7 +35,7 @@ export class ClickUpReportUtil {
   }
 
   get tasksByProject(): any {
-    return _.groupBy(this._tasks, (task) => task.list);
+    return _.groupBy(this._tasks, (task) => task.project);
   }
 
   get tasksCompletenesRate(): string {
