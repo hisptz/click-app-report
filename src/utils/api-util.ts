@@ -40,16 +40,17 @@ export class ApiUtil {
 
   async getProjectTasks(
     fromDueDateLimit: number,
-    toDueDateLimit: number
+    toDueDateLimit: number,
+    page: number
   ): Promise<Array<ApiProjectTaskModel>> {
     const projectTasks: Array<ApiProjectTaskModel> = [];
     await this.logsUtil.addLogs(
       'info',
-      `Discovering project folder list's tasks`,
+      `Discovering project folder list's tasks :: page ${page + 1}`,
       'getProjectTasks'
     );
     try {
-      const url = `${this._baseUrl}/team/${this._teamId}/task?due_date_lt=${toDueDateLimit}&include_closed=true&due_date_gt=${fromDueDateLimit}&reverse=true`;
+      const url = `${this._baseUrl}/team/${this._teamId}/task?page=${page}&due_date_lt=${toDueDateLimit}&include_closed=true&due_date_gt=${fromDueDateLimit}&reverse=true`;
       const response: any = await HttpUtil.getHttp(this._headers, url);
       await this.logsUtil.addLogs(
         'info',
