@@ -46,10 +46,21 @@ export class AppProcess {
         'Preparing Tasks for report generation',
         'setAllTask'
       );
-      this._tasks = await this.apiUtil.getProjectTasks(
-        fromDueDateLimit,
-        toDueDateLimit
-      );
+      this._tasks = [];
+      let continueFetch = true;
+      let page = 0;
+      while (continueFetch) {
+        const tasks: ApiProjectTaskModel[] = await this.apiUtil.getProjectTasks(
+          fromDueDateLimit,
+          toDueDateLimit,
+          page
+        );
+        if (tasks.length > 0) {
+          this._tasks = _.uniqBy([...this._tasks, ...tasks], 'id');
+        }
+        continueFetch = tasks.length > 0;
+        page++;
+      }
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
