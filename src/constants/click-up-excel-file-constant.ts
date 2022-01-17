@@ -8,7 +8,7 @@ export const totalNumberOfHoursPerDay = 8;
 export const taskClosedStatus = [closedStatus, reviewStatus];
 
 export const codesToProjectMapping: any = {
-  'ADMIN/01/2021': [
+  'ADMIN/01/2022': [
     'Management & coordination related activities',
     'Social Advocacy',
     'Innovation',
@@ -16,7 +16,7 @@ export const codesToProjectMapping: any = {
     'Finance Department',
     'Administration Department'
   ],
-  'UIO/02/2021': [
+  'UIO/02/2022': [
     'Eritrea Country Support',
     'Kenya Country Support',
     'Research Projects',
@@ -27,12 +27,11 @@ export const codesToProjectMapping: any = {
     'Tanzania Mainland Country support',
     'Zanzibar Country support'
   ],
-  'EGPAF/03/2021': [],
-  'STC/04/2021': [],
-  'KBL/05/2021': ['USAID KB'],
-  'JHU-CK/07/2021': ['Chandarua Klinik Dashboard'],
-  'JHU/07/2021': [],
-  'MDH-POE/08/2021': ['Zanzibar POE System (MDH)']
+  'EGPAF/03/2022': [],
+  'KBL/04/2022': ['USAID KB'],
+  'JHU-TVCA/05/2022': ['Chandarua Klinik Dashboard'],
+  'MDH-POEZNZ/06/2022': ['Zanzibar POE System (MDH)'],
+  'GIZ/07/2022' : []
 };
 
 export const clickUpReportSourceColumns: any = {
