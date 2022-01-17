@@ -1,45 +1,38 @@
 {
-  "name": "click-up-report",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
-  "scripts": {
-    "build-app": "tsc",
-    "format": "prettier --config .prettierrc --write   \"*/*.ts\" \"*/*/*.ts\"  \"*.json\"",
-    "start": "ts-node ./src/index.ts",
-    "dev": "ts-node-dev --respawn ./src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/chingalo/click-app-report.git"
-  },
-  "author": "joseph chingalo",
-  "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/chingalo/click-app-report/issues"
-  },
-  "homepage": "https://github.com/chingalo/click-app-report#readme",
-  "devDependencies": {
-    "@types/lodash": "^4.14.176",
-    "@types/request": "^2.48.7",
-    "@types/shelljs": "^0.8.9",
-    "ts-node": "^10.4.0",
-    "ts-node-dev": "^1.1.8"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+    "name": "click-up-report",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.ts",
+    "scripts": {
+        "build-app": "tsc",
+        "format": "prettier --config .prettierrc --write   \"*/*.ts\" \"*/*/*.ts\"  \"*.json\"",
+        "start": "ts-node ./src/index.ts",
+        "dev": "ts-node-dev --respawn ./src/index.ts",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/chingalo/click-app-report.git"
+    },
+    "author": "joseph chingalo",
+    "license": "GPL-3.0-or-later",
+    "bugs": {
+        "url": "https://github.com/chingalo/click-app-report/issues"
+    },
+    "homepage": "https://github.com/chingalo/click-app-report#readme",
+    "devDependencies": {
+        "@types/lodash": "^4.14.176",
+        "@types/request": "^2.48.7",
+        "@types/shelljs": "^0.8.9",
+        "ts-node": "^10.4.0",
+        "ts-node-dev": "^1.1.8"
+    },
+    "dependencies": {
+        "lodash": "^4.17.21",
+        "moment": "^2.29.1",
+        "prettier": "^2.5.1",
+        "request": "^2.88.2",
+        "shelljs": "^0.8.5",
+        "xlsx": "^0.17.5"
     }
-  },
-  "dependencies": {
-    "commitizen": "^4.2.4",
-    "cz-conventional-changelog": "^3.3.0",
-    "lodash": "^4.17.21",
-    "moment": "^2.29.1",
-    "prettier": "^2.4.1",
-    "request": "^2.88.2",
-    "shelljs": "^0.8.4",
-    "xlsx": "^0.17.3"
-  }
 }
