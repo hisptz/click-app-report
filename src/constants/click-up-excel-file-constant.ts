@@ -32,7 +32,7 @@ export const codesToProjectMapping: any = {
   'KBL/04/2022': ['USAID KB'],
   'JHU-TVCA/05/2022': ['Chandarua Klinik Dashboard'],
   'MDH-POEZNZ/06/2022': ['Zanzibar POE System (MDH)'],
-  'GIZ/07/2022' : []
+  'GIZ/07/2022': []
 };
 
 export const clickUpReportSourceColumns: any = {

@@ -13,6 +13,8 @@ async function starApp() {
     const logsUtil = new LogsUtil();
     await logsUtil.clearLogs();
     await logsUtil.addLogs('info', 'start an app', 'app');
+    await appProcess.setWorkspaceFolders();
+    await appProcess.generateWorkSpaceFolderReport();
     await appProcess.setAllTask(fromDueDateLimit, toDueDateLimit);
     await appProcess.generateTaskSummary(fromDueDateLimit, toDueDateLimit);
     await appProcess.generateSourceReportFile();
