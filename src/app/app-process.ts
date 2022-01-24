@@ -96,8 +96,28 @@ export class AppProcess {
         'Generating Workspace folder structure',
         'generateWorkSpaceFolderReport'
       );
-      console.log('Generating Workspace folder structure');
-      console.log(this._workspaceFolders);
+      const jsonData = _.flattenDeep(
+        _.map(
+          this._workspaceFolders,
+          (workspaceFolder: ApiProjectFolderModel) => {
+            return [
+              { project: workspaceFolder.name, subProject: '' },
+              ..._.map(
+                workspaceFolder.lists || [],
+                (workspaceList: ApiProjectFolderModel) => {
+                  return { project: '', subProject: workspaceList.name };
+                }
+              ),
+              { project: '', subProject: '' }
+            ];
+          }
+        )
+      );
+      await new ExcelUtil('Project workspace').writeToSingleSheetExcelFile(
+        jsonData,
+        true,
+        'Project'
+      );
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
