@@ -14,7 +14,8 @@ export const codesToProjectMapping: any = {
     'Innovation',
     'Server Administration/Maintenance',
     'Finance Department',
-    'Administration Department'
+    'Administration Department',
+    'EAC Pass Integration'
   ],
   'UIO/02/2022': [
     'Eritrea Country Support',
