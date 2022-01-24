@@ -4,6 +4,7 @@ import {
   taskClosedStatus
 } from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
+import { ApiProjectFolderModel } from '../models/api-project-folder-model';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
 import { ApiUtil } from '../utils/api-util';
 import { AppUtil } from '../utils/app-util';
@@ -13,6 +14,7 @@ import { LogsUtil } from '../utils/logs-util';
 
 export class AppProcess {
   private _reportGeneratedDate: Date;
+  private _workspaceFolders!: Array<ApiProjectFolderModel>;
   private _tasks!: Array<ApiProjectTaskModel>;
   private _reportFile;
   private _clickUpReportFile;
@@ -30,13 +32,31 @@ export class AppProcess {
     this._clickUpReportFile = `click-up-source-file-as_of_${
       reportGeneratedDate.toISOString().split('T')[0]
     }`;
-
+    this._workspaceFolders = [];
+    this._tasks = [];
     this.apiUtil = new ApiUtil(apiConfig);
     this.logsUtil = new LogsUtil();
   }
 
   get reportGeneratedDate(): Date {
     return new Date(this._reportGeneratedDate);
+  }
+
+  async setWorkspaceFolders() {
+    try {
+      await this.logsUtil.addLogs(
+        'info',
+        'Preparing Workspac folder structure',
+        'setWorkspaceFolder'
+      );
+      this._workspaceFolders = await this.apiUtil.getProjectFolderList();
+    } catch (error: any) {
+      await this.logsUtil.addLogs(
+        'error',
+        error.message || error,
+        'setWorkspaceFolder'
+      );
+    }
   }
 
   async setAllTask(fromDueDateLimit: number, toDueDateLimit: number) {
@@ -46,7 +66,6 @@ export class AppProcess {
         'Preparing Tasks for report generation',
         'setAllTask'
       );
-      this._tasks = [];
       let continueFetch = true;
       let page = 0;
       while (continueFetch) {
@@ -66,6 +85,24 @@ export class AppProcess {
         'error',
         error.message || error,
         'setAllTask'
+      );
+    }
+  }
+
+  async generateWorkSpaceFolderReport() {
+    try {
+      await this.logsUtil.addLogs(
+        'info',
+        'Generating Workspace folder structure',
+        'generateWorkSpaceFolderReport'
+      );
+      console.log('Generating Workspace folder structure');
+      console.log(this._workspaceFolders);
+    } catch (error: any) {
+      await this.logsUtil.addLogs(
+        'error',
+        error.message || error,
+        'generateWorkSpaceFolderReport'
       );
     }
   }
