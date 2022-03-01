@@ -304,6 +304,14 @@ export class AppProcess {
           item1: 'Timeliness',
           item2: `${clickUpReportUtil.tasksTimelinessRate}%`
         },
+        {
+          item1: 'Total Hours Spent',
+          item2: `${clickUpReportUtil.totalHoursSpent}`
+        },
+        {
+          item1: 'Total Days Spent',
+          item2: `${clickUpReportUtil.totalDaysSpent}`
+        },
         { item1: '' },
         { item1: 'Overall Distribution by Status' },
         {
@@ -368,6 +376,14 @@ export class AppProcess {
             item1: 'Timeliness',
             item2: `${assigneeClickUpReportUtil.tasksTimelinessRate}%`
           },
+          {
+            item1: 'Total Hours Spent',
+            item2: `${assigneeClickUpReportUtil.totalHoursSpent}`
+          },
+          {
+            item1: 'Total Days Spent',
+            item2: `${assigneeClickUpReportUtil.totalDaysSpent}`
+          },
           { item1: 'Distribution by Status' },
           {
             item1: 'Open',
@@ -420,6 +436,14 @@ export class AppProcess {
             item1: 'Timeliness',
             item2: `${projectClickUpReportUtil.tasksTimelinessRate}%`
           },
+          {
+            item1: 'Total Hours Spent',
+            item2: `${projectClickUpReportUtil.totalHoursSpent}`
+          },
+          {
+            item1: 'Total Days Spent',
+            item2: `${projectClickUpReportUtil.totalDaysSpent}`
+          },
           { item1: 'Distribution by Status' },
           {
             item1: 'Open',
@@ -440,11 +464,12 @@ export class AppProcess {
             item1: 'Assignee',
             item2: 'Completeness',
             item3: 'Timeliness',
-            item4: 'Open',
-            item5: 'In Progress',
-            item6: 'On review',
-            item7: 'Closed/Completed',
-            item8: 'Total'
+            item4: 'Hours Spent',
+            item5: 'Open',
+            item6: 'In Progress',
+            item7: 'On review',
+            item8: 'Closed/Completed',
+            item9: 'Total'
           }
         );
         const tasksByAssignee = projectClickUpReportUtil.tasksByAssignee;
@@ -456,11 +481,12 @@ export class AppProcess {
             item1: `${assignee}`,
             item2: `${assigneeClickUpReportUtil.tasksCompletenesRate}`,
             item3: `${assigneeClickUpReportUtil.tasksTimelinessRate}`,
-            item4: `${assigneeClickUpReportUtil.openTasksCount}`,
-            item5: `${assigneeClickUpReportUtil.inProgressStatusTasksCount}`,
-            item6: `${assigneeClickUpReportUtil.onReviewTasksCount}`,
-            item7: `${assigneeClickUpReportUtil.onCloseTasksCount}`,
-            item8: `${assigneeClickUpReportUtil.totalTasks}`
+            item4: `${assigneeClickUpReportUtil.totalHoursSpent}`,
+            item5: `${assigneeClickUpReportUtil.openTasksCount}`,
+            item6: `${assigneeClickUpReportUtil.inProgressStatusTasksCount}`,
+            item7: `${assigneeClickUpReportUtil.onReviewTasksCount}`,
+            item8: `${assigneeClickUpReportUtil.onCloseTasksCount}`,
+            item9: `${assigneeClickUpReportUtil.totalTasks}`
           });
         }
         summaryJson.push({ item1: '' });
