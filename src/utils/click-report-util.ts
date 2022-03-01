@@ -9,6 +9,7 @@ import {
   totalNumberOfHoursPerDay
 } from '../constants/click-up-excel-file-constant';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
+import { AppUtil } from './app-util';
 
 export class ClickUpReportUtil {
   private _tasks: Array<ApiProjectTaskModel>;
@@ -105,12 +106,23 @@ export class ClickUpReportUtil {
           } else if (status === reviewStatus && lastUpdateDate) {
             completedOnTime = new Date(dueDate) >= new Date(lastUpdateDate);
           } else if (closedDate) {
-            const date = new Date(closedDate);
-            completedOnTime =
-              new Date(dueDate) >=
-              new Date(
-                date.setDate(date.getDate() - allowedNumberOnReviewTasks)
-              );
+            const isInRange = AppUtil.isDateInRangeOfDate(
+              closedDate,
+              task.dueDateFrom,
+              task.dueDateTo
+            );
+            if (isInRange) {
+              // Assumming the max is between specific period of report
+              const date = new Date(closedDate);
+              completedOnTime =
+                new Date(dueDate) >=
+                new Date(
+                  date.setDate(date.getDate() - allowedNumberOnReviewTasks)
+                );
+            } else {
+              //Assume this task was completed before on time
+              completedOnTime = true;
+            }
           }
         }
         return completedOnTime;
