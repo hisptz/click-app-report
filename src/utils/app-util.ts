@@ -61,4 +61,11 @@ export class AppUtil {
     }
     return moment(dateObject).format('D MMMM YYYY');
   }
+
+  static isDateInRangeOfDate(date: any, startDate: any, endDate: any) {
+    date = moment(date, 'YYYY-MM-DD');
+    startDate = moment(startDate, 'YYYY-MM-DD');
+    endDate = moment(endDate, 'YYYY-MM-DD');
+    return !(date.isAfter(endDate) || date.isBefore(startDate));
+  }
 }

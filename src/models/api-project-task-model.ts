@@ -17,4 +17,6 @@ export interface ApiProjectTaskModel {
   projectCode: string;
   project?: string;
   folder?: string;
+  dueDateFrom: string;
+  dueDateTo: string;
 }

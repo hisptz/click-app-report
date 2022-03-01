@@ -113,7 +113,9 @@ export class ApiUtil {
             },
             projectCode: this.getProjectCode(projectObj.name || ``),
             project: projectObj.name || ``,
-            folder: folderObj.name || ``
+            folder: folderObj.name || ``,
+            dueDateFrom: AppUtil.getFormattedDate(fromDueDateLimit),
+            dueDateTo: AppUtil.getFormattedDate(toDueDateLimit)
           });
         }
       }
