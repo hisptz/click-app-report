@@ -26,7 +26,8 @@ export const codesToProjectMapping: any = {
     'South Sudan Country support',
     'Somalia Country support',
     'Tanzania Mainland Country support',
-    'Zanzibar Country support'
+    'Zanzibar Country support',
+    'Chanjo Covid - Tanzania Main land'
   ],
   'EGPAF/03/2022': [],
   'KBL/04/2022': ['USAID KB'],
