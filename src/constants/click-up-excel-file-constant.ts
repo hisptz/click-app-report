@@ -14,9 +14,10 @@ export const codesToProjectMapping: any = {
     'Innovation',
     'Server Administration/Maintenance',
     'Finance Department',
-    'Administration Department',
-    'EAC Pass Integration'
+    'Administration Department'
   ],
+  'PSI-MSDQI/10/2022': ['Zamep MSDQI'],
+  'TMEA-EACPass/08/2022': ['EAC Pass Integration'],
   'UIO/02/2022': [
     'Eritrea Country Support',
     'Kenya Country Support',
