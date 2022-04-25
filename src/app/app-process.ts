@@ -230,7 +230,8 @@ export class AppProcess {
     ];
     const tasks = _.filter(
       new ClickUpReportUtil(tasksByAssignee[assignee]).sortedTasksByDate,
-      (task) => taskClosedStatus.includes(task.status)
+      (task) =>
+        taskClosedStatus.includes(task.status) && parseFloat(task.timeSpent) > 0
     );
     const timeSheetReportUtil = new ClickUpReportUtil(tasks);
     for (const task of timeSheetReportUtil.sortedTasksByDate) {
