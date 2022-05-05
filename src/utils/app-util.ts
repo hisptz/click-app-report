@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { minmunWorkingDays } from '../constants/click-up-excel-file-constant';
 
 export class AppUtil {
   static getNumberOfHoursSpent(milliseconds: number) {
@@ -10,12 +11,17 @@ export class AppUtil {
     const lastSevenDay = this.getFormattedDate(
       new Date(new Date().setDate(new Date().getDate() - 7))
     );
+    let workingDays = minmunWorkingDays;
     let fromDueDateLimit = new Date(lastSevenDay).getTime();
     let toDueDateLimit = new Date(today).getTime();
     try {
       const parameters = process.argv;
       const fromIndex = 2;
       const toIndex = 3;
+      const workingDaysIndex = 4;
+      workingDays = parameters[workingDaysIndex]
+        ? parseInt(parameters[workingDaysIndex], 10)
+        : workingDays;
       if (parameters[fromIndex] && parameters[toIndex]) {
         fromDueDateLimit =
           new Date(parameters[fromIndex]) <= new Date(parameters[toIndex])
@@ -36,7 +42,7 @@ export class AppUtil {
             : new Date(parameters[fromIndex]).getTime();
       }
     } catch (error) {}
-    return { fromDueDateLimit, toDueDateLimit };
+    return { fromDueDateLimit, toDueDateLimit, workingDays };
   }
 
   static getFormattedDate(date: any) {

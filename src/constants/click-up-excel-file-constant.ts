@@ -5,6 +5,7 @@ export const openStatus = 'Open';
 export const inProgressStatus = 'in progress';
 export const allowedNumberOnReviewTasks = 4;
 export const totalNumberOfHoursPerDay = 8;
+export const minmunWorkingDays = 20;
 export const taskClosedStatus = [closedStatus, reviewStatus];
 
 export const codesToProjectMapping: any = {

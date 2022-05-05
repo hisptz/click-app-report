@@ -14,6 +14,7 @@ import { LogsUtil } from '../utils/logs-util';
 
 export class AppProcess {
   private _reportGeneratedDate: Date;
+  private _workingDays: number;
   private _workspaceFolders!: Array<ApiProjectFolderModel>;
   private _tasks!: Array<ApiProjectTaskModel>;
   private _reportFile;
@@ -23,8 +24,10 @@ export class AppProcess {
 
   constructor(
     apiConfig: ApiConfigModel,
-    reportGeneratedDate: Date = new Date()
+    reportGeneratedDate: Date = new Date(),
+    workingDays: number
   ) {
+    this._workingDays = workingDays;
     this._reportGeneratedDate = reportGeneratedDate;
     this._reportFile = `click-up-summary-report-as_of_${
       reportGeneratedDate.toISOString().split('T')[0]
@@ -153,10 +156,12 @@ export class AppProcess {
       const overallSummary = this.overallTaskSummary(fromDate, toDate);
       const projectSummary = this.overallTaskByProjectSummary();
       const individualSummary = this.overallTaskByAssignedSummary();
+      const dqaSummary = this.dqaSummary();
       const jsonDataObject = {
         'Overall summary': overallSummary,
         'Individual summary': individualSummary,
-        'Project summary': projectSummary
+        'Project summary': projectSummary,
+        'DQA issues': dqaSummary
       };
       await new ExcelUtil(this._reportFile).writeToMultipleSheetExcelFile(
         jsonDataObject,
@@ -169,6 +174,43 @@ export class AppProcess {
         'generateTaskSummary'
       );
     }
+  }
+
+  dqaSummary() {
+    const summaryJson = [
+      { item1: `Expected working days : ${this._workingDays}` },
+      {},
+      { item1: 'Full Name', item2: 'Number of Days spent' }
+    ];
+    try {
+      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
+      const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
+      for (const assignee of _.keys(tasksByAssignee)) {
+        const tasks = _.filter(
+          new ClickUpReportUtil(tasksByAssignee[assignee]).sortedTasksByDate,
+          (task) =>
+            taskClosedStatus.includes(task.status) &&
+            parseFloat(task.timeSpent) > 0
+        );
+        const numberOfWeekEndDays =
+          2 * parseInt(`${this._workingDays / 5}`, 10);
+        const assigneeReportUtil = new ClickUpReportUtil(tasks);
+        const totalDaysSpent = parseFloat(assigneeReportUtil.totalDaysSpent);
+        const maximunDayOffLimit = parseFloat(
+          (this._workingDays / 8).toFixed(1)
+        );
+        if (
+          totalDaysSpent + maximunDayOffLimit < this._workingDays ||
+          this._workingDays + numberOfWeekEndDays < totalDaysSpent
+        ) {
+          summaryJson.push({
+            item1: `${assignee}`,
+            item2: `${totalDaysSpent}`
+          });
+        }
+      }
+    } catch (error) {}
+    return summaryJson;
   }
 
   async generateTimeSheetForIndividual(
