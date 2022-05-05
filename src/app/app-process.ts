@@ -14,6 +14,7 @@ import { LogsUtil } from '../utils/logs-util';
 
 export class AppProcess {
   private _reportGeneratedDate: Date;
+  private _workingDays: number;
   private _workspaceFolders!: Array<ApiProjectFolderModel>;
   private _tasks!: Array<ApiProjectTaskModel>;
   private _reportFile;
@@ -23,8 +24,10 @@ export class AppProcess {
 
   constructor(
     apiConfig: ApiConfigModel,
-    reportGeneratedDate: Date = new Date()
+    reportGeneratedDate: Date = new Date(),
+    workingDays: number
   ) {
+    this._workingDays = workingDays;
     this._reportGeneratedDate = reportGeneratedDate;
     this._reportFile = `click-up-summary-report-as_of_${
       reportGeneratedDate.toISOString().split('T')[0]
@@ -36,6 +39,7 @@ export class AppProcess {
     this._tasks = [];
     this.apiUtil = new ApiUtil(apiConfig);
     this.logsUtil = new LogsUtil();
+    console.log({ workingDays: this._workingDays });
   }
 
   get reportGeneratedDate(): Date {

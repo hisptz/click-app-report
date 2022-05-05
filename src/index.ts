@@ -7,9 +7,19 @@ starApp();
 
 async function starApp() {
   try {
-    const { fromDueDateLimit, toDueDateLimit } = AppUtil.getStartEndDateLimit();
+    const { fromDueDateLimit, toDueDateLimit, workingDays } =
+      AppUtil.getStartEndDateLimit();
+    console.log({
+      workingDays,
+      fromDueDateLimit: new Date(fromDueDateLimit),
+      toDueDateLimit: new Date(toDueDateLimit)
+    });
     const reportGeneratedDate = new Date();
-    const appProcess = new AppProcess(apiConfig, reportGeneratedDate);
+    const appProcess = new AppProcess(
+      apiConfig,
+      reportGeneratedDate,
+      workingDays
+    );
     const logsUtil = new LogsUtil();
     await logsUtil.clearLogs();
     await logsUtil.addLogs('info', 'start an app', 'app');
