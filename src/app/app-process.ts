@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {
   clickUpReportSourceColumns,
+  maximunDayOffLimit,
   taskClosedStatus
 } from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
@@ -39,7 +40,6 @@ export class AppProcess {
     this._tasks = [];
     this.apiUtil = new ApiUtil(apiConfig);
     this.logsUtil = new LogsUtil();
-    console.log({ workingDays: this._workingDays });
   }
 
   get reportGeneratedDate(): Date {
@@ -157,10 +157,12 @@ export class AppProcess {
       const overallSummary = this.overallTaskSummary(fromDate, toDate);
       const projectSummary = this.overallTaskByProjectSummary();
       const individualSummary = this.overallTaskByAssignedSummary();
+      const dqaSummary = this.dqaSummary();
       const jsonDataObject = {
         'Overall summary': overallSummary,
         'Individual summary': individualSummary,
-        'Project summary': projectSummary
+        'Project summary': projectSummary,
+        'DQA issues': dqaSummary
       };
       await new ExcelUtil(this._reportFile).writeToMultipleSheetExcelFile(
         jsonDataObject,
@@ -173,6 +175,36 @@ export class AppProcess {
         'generateTaskSummary'
       );
     }
+  }
+
+  async dqaSummary() {
+    const summaryJson = [{ 'Full Name': '', 'Number of Days spent': '' }];
+    try {
+      const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
+      const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
+      for (const assignee of _.keys(tasksByAssignee)) {
+        const tasks = _.filter(
+          new ClickUpReportUtil(tasksByAssignee[assignee]).sortedTasksByDate,
+          (task) =>
+            taskClosedStatus.includes(task.status) &&
+            parseFloat(task.timeSpent) > 0
+        );
+        const numberOfWeekEndDays =
+          2 * parseInt(`${this._workingDays / 5}`, 10);
+        const assigneeReportUtil = new ClickUpReportUtil(tasks);
+        const totalDaysSpent = parseFloat(assigneeReportUtil.totalDaysSpent);
+        if (
+          totalDaysSpent + maximunDayOffLimit < this._workingDays ||
+          this._workingDays + numberOfWeekEndDays < totalDaysSpent
+        ) {
+          summaryJson.push({
+            'Full Name': `${assignee}`,
+            'Number of Days spent': `${totalDaysSpent}`
+          });
+        }
+      }
+    } catch (error) {}
+    return summaryJson;
   }
 
   async generateTimeSheetForIndividual(
