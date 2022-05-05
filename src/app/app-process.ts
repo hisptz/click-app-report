@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import {
   clickUpReportSourceColumns,
-  maximunDayOffLimit,
   taskClosedStatus
 } from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
@@ -177,8 +176,12 @@ export class AppProcess {
     }
   }
 
-  async dqaSummary() {
-    const summaryJson = [{ 'Full Name': '', 'Number of Days spent': '' }];
+  dqaSummary() {
+    const summaryJson = [
+      { item1: `Expected working days : ${this._workingDays}` },
+      {},
+      { item1: 'Full Name', item2: 'Number of Days spent' }
+    ];
     try {
       const clickUpReportUtil = new ClickUpReportUtil(this._tasks);
       const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
@@ -193,13 +196,16 @@ export class AppProcess {
           2 * parseInt(`${this._workingDays / 5}`, 10);
         const assigneeReportUtil = new ClickUpReportUtil(tasks);
         const totalDaysSpent = parseFloat(assigneeReportUtil.totalDaysSpent);
+        const maximunDayOffLimit = parseFloat(
+          (this._workingDays / 8).toFixed(1)
+        );
         if (
           totalDaysSpent + maximunDayOffLimit < this._workingDays ||
           this._workingDays + numberOfWeekEndDays < totalDaysSpent
         ) {
           summaryJson.push({
-            'Full Name': `${assignee}`,
-            'Number of Days spent': `${totalDaysSpent}`
+            item1: `${assignee}`,
+            item2: `${totalDaysSpent}`
           });
         }
       }
