@@ -10,32 +10,39 @@ export const taskClosedStatus = [closedStatus, reviewStatus];
 
 export const codesToProjectMapping: any = {
   'ADMIN/01/2022': [
-    'Management & coordination related activities',
+    'General Activities(Internal)',
+    'Administration Department',
     'Social Advocacy',
     'Innovation',
     'Server Administration/Maintenance',
     'Finance Department',
-    'Administration Department'
+    '[Archived] Management & coordination related activities'
   ],
-  'PSI-MSDQI/10/2022': ['Zamep MSDQI'],
-  'TMEA-EACPass/08/2022': ['EAC Pass Integration'],
   'UIO/02/2022': [
-    'Eritrea Country Support',
-    'Kenya Country Support',
+    'General HISP Support (UiO)',
+    'GAVI Global',
+    'GAVI TCA',
+    'Unicef Somalia',
+    'Unicef Apps Development',
     'Research Projects',
-    'Unicef Apps',
-    'Academy and Material Development',
-    'South Sudan Country support',
-    'Somalia Country support',
-    'Tanzania Mainland Country support',
-    'Zanzibar Country support',
-    'Chanjo Covid - Tanzania Main land'
+    '[Archived] Kenya Country Support',
+    '[Archived] Tanzania Mainland Country support',
+    '[Archived] South Sudan Country support',
+    '[Archived] Somalia Country support',
+    '[Archived] Zanzibar Country support',
+    '[Archived] Eritrea Country Support',
+    '[Archived] Academy and Material Development',
+    '[Archived] Chanjo Covid - Tanzania Main land'
   ],
-  'EGPAF/03/2022': [],
+  'EGPAF/03/2022': ['EGPAF'],
   'KBL/04/2022': ['USAID KB'],
   'JHU-TVCA/05/2022': ['Chandarua Klinik Dashboard'],
   'MDH-POEZNZ/06/2022': ['Zanzibar POE System (MDH)'],
-  'GIZ/07/2022': []
+  'GIZ/07/2022': [],
+  'TMEA-EACPass/08/2022': ['EAC Pass Integration'],
+  'GF-SEAF-HUB/09/2022': ['Global Fund Hub work'],
+  'PSI-MSDQI/10/2022': ['Zamep MSDQI'],
+  'WDF/11/2022': ['World Diabetes Foundation']
 };
 
 export const clickUpReportSourceColumns: any = {
