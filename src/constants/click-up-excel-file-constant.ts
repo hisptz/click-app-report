@@ -39,7 +39,7 @@ export const codesToProjectMapping: any = {
   'JHU-TVCA/05/2022': ['Chandarua Klinik Dashboard'],
   'MDH-POEZNZ/06/2022': ['Zanzibar POE System (MDH)'],
   'GIZ/07/2022': [],
-  'PMI-TMSA/16/2022': ['USAID TMSA'],
+  'PMI-TMSA/16/2022': ['Shinda Malaria'],
   'RTI/12/2022': ['CARPHA RTI'],
   'TMEA-EACPass/08/2022': ['EAC Pass Integration'],
   'GF-SEAF-HUB/09/2022': ['Global Fund Hub work'],
