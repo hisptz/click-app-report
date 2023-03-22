@@ -15,7 +15,13 @@ export const codesToProjectMapping: any = {
     'Social Advocacy',
     'Innovation',
     'Server Administration/Maintenance',
-    'Finance Department'
+    'Finance Department',
+    'Zanzibar POE System (MDH)',
+    'EAC Pass Integration',
+    'EGPAF',
+    'Chandarua Klinik Dashboard',
+    'CARPHA RTI',
+    'Zamep MSDQI'
   ],
   'HISP- UIO/2023': [
     'General HISP Support (UiO)',
@@ -32,13 +38,8 @@ export const codesToProjectMapping: any = {
   'S-MALARIA/2023': ['Shinda Malaria'],
   'C/COVID/2023': [],
   '': [
-    'Zanzibar POE System (MDH)',
-    'CARPHA RTI',
-    'Zamep MSDQI',
     '[Archived] Management & coordination related activities',
-    'EAC Pass Integration',
-    'EGPAF',
-    'Chandarua Klinik Dashboard',
+
     '[Archived] Management & coordination related activities',
     '[Archived] Kenya Country Support',
     '[Archived] Tanzania Mainland Country support',
