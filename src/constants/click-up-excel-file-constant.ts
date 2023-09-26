@@ -16,30 +16,31 @@ export const codesToProjectMapping: any = {
     'Innovation',
     'Server Administration/Maintenance',
     'Finance Department',
-    'Zanzibar POE System (MDH)',
     'EAC Pass Integration',
     'EGPAF',
     'Chandarua Klinik Dashboard',
     'CARPHA RTI',
     'Zamep MSDQI'
   ],
-  'HISP- UIO/2023': [
+  'HISP-UIO/2023': [
     'General HISP Support (UiO)',
     'GAVI Global',
     'GAVI TCA',
     'Unicef Somalia',
     'Unicef Apps Development',
     'Research Projects',
-    'WHO Pastoralist'
+    'WHO Pastoralist',
+    'CDC CoAg (OneHealth)'
   ],
   'KB-LESOTHO/2023': ['USAID KB'],
   'GF-SEAF-HUB/2023': ['Global Fund Hub work'],
   'D-COMPASS/2023': ['World Diabetes Foundation'],
   'S-MALARIA/2023': ['Shinda Malaria'],
   'C/COVID/2023': [],
+  'MDH-ZTHS/2023': ['Zanzibar POE System (MDH)'],
+  'KNCV-TB/2023': ['Smart pills ETLs Integration'],
   '': [
     '[Archived] Management & coordination related activities',
-
     '[Archived] Management & coordination related activities',
     '[Archived] Kenya Country Support',
     '[Archived] Tanzania Mainland Country support',
