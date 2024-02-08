@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {
-  clickUpReportSourceColumns,
-  taskClosedStatus
+  CLICK_UP_REPORT_SOURCE_COLUMNS,
+  TASK_CLOSED_STATUS
 } from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectFolderModel } from '../models/api-project-folder-model';
@@ -134,7 +134,7 @@ export class AppProcess {
     try {
       const clickUpReportUtil = new ClickUpReportUtil(
         this._tasks,
-        clickUpReportSourceColumns
+        CLICK_UP_REPORT_SOURCE_COLUMNS
       );
       await new ExcelUtil(this._clickUpReportFile).writeToSingleSheetExcelFile(
         clickUpReportUtil.toExcelJson,
@@ -189,7 +189,7 @@ export class AppProcess {
         const tasks = _.filter(
           new ClickUpReportUtil(tasksByAssignee[assignee]).sortedTasksByDate,
           (task) =>
-            taskClosedStatus.includes(task.status) &&
+            TASK_CLOSED_STATUS.includes(task.status) &&
             parseFloat(task.timeSpent) > 0
         );
         const numberOfWeekEndDays =
@@ -273,7 +273,8 @@ export class AppProcess {
     const tasks = _.filter(
       new ClickUpReportUtil(tasksByAssignee[assignee]).sortedTasksByDate,
       (task) =>
-        taskClosedStatus.includes(task.status) && parseFloat(task.timeSpent) > 0
+        TASK_CLOSED_STATUS.includes(task.status) &&
+        parseFloat(task.timeSpent) > 0
     );
     const timeSheetReportUtil = new ClickUpReportUtil(tasks);
     for (const task of timeSheetReportUtil.sortedTasksByDate) {
@@ -366,7 +367,7 @@ export class AppProcess {
         },
         {
           item1: `${clickUpReportUtil.openTasksCount}`,
-          item2: `${clickUpReportUtil.inProgressStatusTasksCount}`,
+          item2: `${clickUpReportUtil.IN_PROGRESS_STATUSTasksCount}`,
           item3: `${clickUpReportUtil.onReviewTasksCount}`,
           item4: `${clickUpReportUtil.onCloseTasksCount}`,
           item5: `${clickUpReportUtil.totalTasks}`
@@ -390,7 +391,7 @@ export class AppProcess {
         summaryJson.push({
           item1: `${project}`,
           item2: `${projectClickUpReportUtil.openTasksCount}`,
-          item3: `${projectClickUpReportUtil.inProgressStatusTasksCount}`,
+          item3: `${projectClickUpReportUtil.IN_PROGRESS_STATUSTasksCount}`,
           item4: `${projectClickUpReportUtil.onReviewTasksCount}`,
           item5: `${projectClickUpReportUtil.onCloseTasksCount}`,
           item6: `${projectClickUpReportUtil.totalTasks}`
@@ -437,7 +438,7 @@ export class AppProcess {
           },
           {
             item1: `${assigneeClickUpReportUtil.openTasksCount}`,
-            item2: `${assigneeClickUpReportUtil.inProgressStatusTasksCount}`,
+            item2: `${assigneeClickUpReportUtil.IN_PROGRESS_STATUSTasksCount}`,
             item3: `${assigneeClickUpReportUtil.onReviewTasksCount}`,
             item4: `${assigneeClickUpReportUtil.onCloseTasksCount}`,
             item5: `${assigneeClickUpReportUtil.totalTasks}`
@@ -497,7 +498,7 @@ export class AppProcess {
           },
           {
             item1: `${projectClickUpReportUtil.openTasksCount}`,
-            item2: `${projectClickUpReportUtil.inProgressStatusTasksCount}`,
+            item2: `${projectClickUpReportUtil.IN_PROGRESS_STATUSTasksCount}`,
             item3: `${projectClickUpReportUtil.onReviewTasksCount}`,
             item4: `${projectClickUpReportUtil.onCloseTasksCount}`,
             item5: `${projectClickUpReportUtil.totalTasks}`
@@ -526,7 +527,7 @@ export class AppProcess {
             item3: `${assigneeClickUpReportUtil.tasksTimelinessRate}`,
             item4: `${assigneeClickUpReportUtil.totalHoursSpent}`,
             item5: `${assigneeClickUpReportUtil.openTasksCount}`,
-            item6: `${assigneeClickUpReportUtil.inProgressStatusTasksCount}`,
+            item6: `${assigneeClickUpReportUtil.IN_PROGRESS_STATUSTasksCount}`,
             item7: `${assigneeClickUpReportUtil.onReviewTasksCount}`,
             item8: `${assigneeClickUpReportUtil.onCloseTasksCount}`,
             item9: `${assigneeClickUpReportUtil.totalTasks}`

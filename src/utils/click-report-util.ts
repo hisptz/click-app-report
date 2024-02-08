@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import {
-  allowedNumberOnReviewTasks,
-  closedStatus,
-  inProgressStatus,
-  openStatus,
-  reviewStatus,
-  taskClosedStatus,
-  totalNumberOfHoursPerDay
+  ALLOWED_NUMBER_ON_REVIEW_TASKS,
+  CLOSED_STATUS,
+  IN_PROGRESS_STATUS,
+  OPEN_STATUS,
+  REVIEW_STATUS,
+  TASK_CLOSED_STATUS,
+  TOTAL_NUMBER_OF_HOURS_PER_DAY
 } from '../constants/click-up-excel-file-constant';
 import { ApiProjectTaskModel } from '../models/api-project-task-model';
 import { AppUtil } from './app-util';
@@ -50,30 +50,30 @@ export class ClickUpReportUtil {
   }
 
   get openTasksCount(): number {
-    return _.filter(this._tasks || [], (task) => task.status === openStatus)
+    return _.filter(this._tasks || [], (task) => task.status === OPEN_STATUS)
       .length;
   }
 
-  get inProgressStatusTasksCount(): number {
+  get IN_PROGRESS_STATUSTasksCount(): number {
     return _.filter(
       this._tasks || [],
-      (task) => task.status === inProgressStatus
+      (task) => task.status === IN_PROGRESS_STATUS
     ).length;
   }
 
   get onReviewTasksCount(): number {
-    return _.filter(this._tasks || [], (task) => task.status === reviewStatus)
+    return _.filter(this._tasks || [], (task) => task.status === REVIEW_STATUS)
       .length;
   }
 
   get onCloseTasksCount(): number {
-    return _.filter(this._tasks || [], (task) => task.status === closedStatus)
+    return _.filter(this._tasks || [], (task) => task.status === CLOSED_STATUS)
       .length;
   }
 
   get tasksCompletedCount(): number {
     return _.filter(this._tasks || [], (task) =>
-      taskClosedStatus.includes(task.status)
+      TASK_CLOSED_STATUS.includes(task.status)
     ).length;
   }
 
@@ -86,7 +86,7 @@ export class ClickUpReportUtil {
   get totalDaysSpent(): string {
     return (
       _.sumBy(this._tasks, (task) => parseFloat(task.timeSpent)) /
-      totalNumberOfHoursPerDay
+      TOTAL_NUMBER_OF_HOURS_PER_DAY
     ).toFixed(1);
   }
 
@@ -96,14 +96,14 @@ export class ClickUpReportUtil {
       count = _.filter(this._tasks || [], (task) => {
         const status = task.status;
         let completedOnTime = false;
-        if (taskClosedStatus.includes(status)) {
+        if (TASK_CLOSED_STATUS.includes(status)) {
           const dueDate = task.dueDate || task.createdDate;
           const lastUpdateDate = task.lastUpdatedDate;
           const closedDate = task.closedDate;
           const completedDate = task.completedDate;
           if (completedDate) {
             completedOnTime = new Date(dueDate) >= new Date(completedDate);
-          } else if (status === reviewStatus && lastUpdateDate) {
+          } else if (status === REVIEW_STATUS && lastUpdateDate) {
             completedOnTime = new Date(dueDate) >= new Date(lastUpdateDate);
           } else if (closedDate) {
             const isInRange = AppUtil.isDateInRangeOfDate(
@@ -117,7 +117,7 @@ export class ClickUpReportUtil {
               completedOnTime =
                 new Date(dueDate) >=
                 new Date(
-                  date.setDate(date.getDate() - allowedNumberOnReviewTasks)
+                  date.setDate(date.getDate() - ALLOWED_NUMBER_ON_REVIEW_TASKS)
                 );
             } else {
               //Assume this task was completed before on time
