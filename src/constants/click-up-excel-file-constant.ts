@@ -9,7 +9,7 @@ export const minmunWorkingDays = 20;
 export const taskClosedStatus = [closedStatus, reviewStatus];
 
 export const codesToProjectMapping: any = {
-  'ADMIN/2023': [
+  'ADMIN/2024': [
     'General Activities(Internal)',
     'Administration Department',
     'Social Advocacy',
@@ -20,9 +20,22 @@ export const codesToProjectMapping: any = {
     'EGPAF',
     'Chandarua Klinik Dashboard',
     'CARPHA RTI',
-    'Zamep MSDQI'
+    'Zamep MSDQI',
+    'Media & Public Relations'
   ],
-  'HISP-UIO/2023': [
+  'KB-LESOTHO/2024': ['USAID KB'],
+  'GF-SEAF-HUB/2024': ['Global Fund Hub work'],
+  'D-COMPASS/2024': ['World Diabetes Foundation'],
+  'S-MALARIA/2024': ['Shinda Malaria'],
+  'INT-HEALTH/2024': [],
+  'Somalia -EIR/2024': [],
+  'MDH-ZTHS/2024': ['Zanzibar POE System (MDH)'],
+  'KNCV-TB/2024': ['Smart pills ETLs Integration'],
+  'STC/2024': [],
+  'MoH-IDSR/2024': ['IDSR Dashboards'],
+  'ACADEMY/2024': [],
+  'MC-BHI/2024': ['BHI South Sudan'],
+  'HISP-UIO/2024': [
     'General HISP Support (UiO)',
     'GAVI Global',
     'GAVI TCA',
@@ -32,13 +45,6 @@ export const codesToProjectMapping: any = {
     'WHO Pastoralist',
     'CDC CoAg (OneHealth)'
   ],
-  'KB-LESOTHO/2023': ['USAID KB'],
-  'GF-SEAF-HUB/2023': ['Global Fund Hub work'],
-  'D-COMPASS/2023': ['World Diabetes Foundation'],
-  'S-MALARIA/2023': ['Shinda Malaria'],
-  'C/COVID/2023': [],
-  'MDH-ZTHS/2023': ['Zanzibar POE System (MDH)'],
-  'KNCV-TB/2023': ['Smart pills ETLs Integration'],
   '': [
     '[Archived] Management & coordination related activities',
     '[Archived] Management & coordination related activities',
