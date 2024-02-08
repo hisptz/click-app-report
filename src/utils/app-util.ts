@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { minmunWorkingDays } from '../constants/click-up-excel-file-constant';
+import { MINIMUM_WORKING_DAYS } from '../constants/click-up-excel-file-constant';
 
 export class AppUtil {
   static getNumberOfHoursSpent(milliseconds: number) {
@@ -11,7 +11,7 @@ export class AppUtil {
     const lastSevenDay = this.getFormattedDate(
       new Date(new Date().setDate(new Date().getDate() - 7))
     );
-    let workingDays = minmunWorkingDays;
+    let workingDays = MINIMUM_WORKING_DAYS;
     let fromDueDateLimit = new Date(lastSevenDay).getTime();
     let toDueDateLimit = new Date(today).getTime();
     try {

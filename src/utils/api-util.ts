@@ -1,7 +1,7 @@
 import _, { parseInt } from 'lodash';
 import {
-  codesToProjectMapping,
-  completedDateColum
+  CODES_TO_PROJECT_MAPPING,
+  COMPLETED_DATE_COLUMN
 } from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectFolderModel } from '../models/api-project-folder-model';
@@ -29,8 +29,8 @@ export class ApiUtil {
   }
 
   getProjectCode(projectCode: string): string {
-    for (const code of _.keys(codesToProjectMapping)) {
-      const projectCodes = codesToProjectMapping[code] || [];
+    for (const code of _.keys(CODES_TO_PROJECT_MAPPING)) {
+      const projectCodes = CODES_TO_PROJECT_MAPPING[code] || [];
       if (projectCodes.includes(projectCode)) {
         projectCode = code;
       }
@@ -68,7 +68,7 @@ export class ApiUtil {
             return (
               customField &&
               customField.name &&
-              completedDateColum.toLowerCase() ===
+              COMPLETED_DATE_COLUMN.toLowerCase() ===
                 `${customField.name}`.toLowerCase()
             );
           }

@@ -10,10 +10,11 @@ export class ExcelUtil {
   private excelDir: string = 'excels';
   private excelFileName: string;
 
-  constructor(excelFileName: string) {
+  constructor(excelFileName: string, subDir = '') {
+    let excelDir = subDir !== '' ? `${this.excelDir}/${subDir}` : this.excelDir;
     this.excelFileName = excelFileName;
     this.logsUtil = new LogsUtil();
-    this.fileUtil = new FileUtil(this.excelDir, this.excelFileName, 'xlsx');
+    this.fileUtil = new FileUtil(excelDir, this.excelFileName, 'xlsx');
   }
 
   async writeToSingleSheetExcelFile(
