@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import {
   CLICK_UP_REPORT_SOURCE_COLUMNS,
-  TASK_CLOSED_STATUS
+  REPORTS_SUB_FOLDER,
+  TASK_CLOSED_STATUS,
+  TIMESHEETS_SUB_FOLDER
 } from '../constants/click-up-excel-file-constant';
 import { ApiConfigModel } from '../models/api-config-model';
 import { ApiProjectFolderModel } from '../models/api-project-folder-model';
@@ -13,7 +15,6 @@ import { ExcelUtil } from '../utils/excel-util';
 import { LogsUtil } from '../utils/logs-util';
 
 export class AppProcess {
-  private _reportGeneratedDate: Date;
   private _workingDays: number;
   private _workspaceFolders!: Array<ApiProjectFolderModel>;
   private _tasks!: Array<ApiProjectTaskModel>;
@@ -22,27 +23,14 @@ export class AppProcess {
   private logsUtil: LogsUtil;
   private apiUtil: ApiUtil;
 
-  constructor(
-    apiConfig: ApiConfigModel,
-    reportGeneratedDate: Date = new Date(),
-    workingDays: number
-  ) {
+  constructor(apiConfig: ApiConfigModel, workingDays: number) {
     this._workingDays = workingDays;
-    this._reportGeneratedDate = reportGeneratedDate;
-    this._reportFile = `click-up-summary-report-as_of_${
-      reportGeneratedDate.toISOString().split('T')[0]
-    }`;
-    this._clickUpReportFile = `click-up-source-file-as_of_${
-      reportGeneratedDate.toISOString().split('T')[0]
-    }`;
+    this._reportFile = `click-up-summary-report`;
+    this._clickUpReportFile = `click-up-source-file`;
     this._workspaceFolders = [];
     this._tasks = [];
     this.apiUtil = new ApiUtil(apiConfig);
     this.logsUtil = new LogsUtil();
-  }
-
-  get reportGeneratedDate(): Date {
-    return new Date(this._reportGeneratedDate);
   }
 
   async setWorkspaceFolders() {
@@ -136,10 +124,10 @@ export class AppProcess {
         this._tasks,
         CLICK_UP_REPORT_SOURCE_COLUMNS
       );
-      await new ExcelUtil(this._clickUpReportFile).writeToSingleSheetExcelFile(
-        clickUpReportUtil.toExcelJson,
-        false
-      );
+      await new ExcelUtil(
+        this._clickUpReportFile,
+        REPORTS_SUB_FOLDER
+      ).writeToSingleSheetExcelFile(clickUpReportUtil.toExcelJson, false);
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
@@ -163,10 +151,10 @@ export class AppProcess {
         'Project summary': projectSummary,
         'DQA issues': dqaSummary
       };
-      await new ExcelUtil(this._reportFile).writeToMultipleSheetExcelFile(
-        jsonDataObject,
-        true
-      );
+      await new ExcelUtil(
+        this._reportFile,
+        REPORTS_SUB_FOLDER
+      ).writeToMultipleSheetExcelFile(jsonDataObject, true);
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
