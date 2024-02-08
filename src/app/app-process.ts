@@ -235,7 +235,8 @@ export class AppProcess {
           assignee
         );
         await new ExcelUtil(
-          `[${assignee}]Timesheet`
+          `[${assignee}]Timesheet`,
+          TIMESHEETS_SUB_FOLDER
         ).writeToSingleSheetExcelFile(summaryJson, true);
       }
     } catch (error: any) {
