@@ -46,7 +46,8 @@ export const CODES_TO_PROJECT_MAPPING: any = {
     'Unicef Apps Development',
     'Research Projects',
     'WHO Pastoralist',
-    'CDC CoAg (OneHealth)'
+    'CDC CoAg (OneHealth)',
+    'South Sudan TVET MIS'
   ],
   '': [
     '[Archived] Management & coordination related activities',
