@@ -24,7 +24,7 @@ export const CODES_TO_PROJECT_MAPPING: any = {
     'Chandarua Klinik Dashboard',
     'CARPHA RTI',
     'Zamep MSDQI',
-    'Media & Public Relations'
+    'Media & Public Relations','DHIS2 Analytics Messenger'
   ],
   'KB-LESOTHO/2024': ['USAID KB'],
   'GF-SEAF-HUB/2024': ['Global Fund Hub work'],
