@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import {
+  ADMIN_SUB_FOLDER,
   CLICK_UP_REPORT_SOURCE_COLUMNS,
   REPORTS_SUB_FOLDER,
   TASK_CLOSED_STATUS,
@@ -13,15 +14,18 @@ import { AppUtil } from '../utils/app-util';
 import { ClickUpReportUtil } from '../utils/click-report-util';
 import { ExcelUtil } from '../utils/excel-util';
 import { LogsUtil } from '../utils/logs-util';
+import { ApiProjectUserModel } from '../models/api-project-user-model';
 
 export class AppProcess {
   private _workingDays: number;
   private _workspaceFolders!: Array<ApiProjectFolderModel>;
   private _tasks!: Array<ApiProjectTaskModel>;
+  private _users: Array<ApiProjectUserModel>;
   private _reportFile;
   private _clickUpReportFile;
   private logsUtil: LogsUtil;
   private apiUtil: ApiUtil;
+
 
   constructor(apiConfig: ApiConfigModel, workingDays: number) {
     this._workingDays = workingDays;
@@ -29,15 +33,33 @@ export class AppProcess {
     this._clickUpReportFile = `click-up-source-file`;
     this._workspaceFolders = [];
     this._tasks = [];
+    this._users = [];
     this.apiUtil = new ApiUtil(apiConfig);
     this.logsUtil = new LogsUtil();
+  }
+
+  async setWorkSpaceUsers(){
+    try {
+      await this.logsUtil.addLogs(
+        'info',
+        'Preparing Workspac user list',
+        'setWorkspaceFolder'
+      );
+      this._users = await this.apiUtil.getProjectUsers();
+    } catch (error: any) {
+      await this.logsUtil.addLogs(
+        'error',
+        error.message || error,
+        'setWorkspaceFolder'
+      );
+    }
   }
 
   async setWorkspaceFolders() {
     try {
       await this.logsUtil.addLogs(
         'info',
-        'Preparing Workspac folder structure',
+        'Preparing Workspace folder structure',
         'setWorkspaceFolder'
       );
       this._workspaceFolders = await this.apiUtil.getProjectFolderList();
@@ -104,16 +126,38 @@ export class AppProcess {
           }
         )
       );
-      await new ExcelUtil('Project workspace').writeToSingleSheetExcelFile(
+      await new ExcelUtil('Project workspace', ADMIN_SUB_FOLDER).writeToSingleSheetExcelFile(
         jsonData,
         true,
         'Project'
       );
+      const users: Array<ApiProjectUserModel> = await this.apiUtil.getProjectUsers();
     } catch (error: any) {
       await this.logsUtil.addLogs(
         'error',
         error.message || error,
         'generateWorkSpaceFolderReport'
+      );
+    }
+  }
+
+  async generateWorkSpaceUserReport() {
+    try {
+      await this.logsUtil.addLogs(
+        'info',
+        'Generating Workspace user list report',
+        'generateWorkSpaceUserReport'
+      );
+      await new ExcelUtil('Workspace Users', ADMIN_SUB_FOLDER).writeToSingleSheetExcelFile(
+        this._users,
+        false,
+        'User List'
+      );
+    } catch (error: any) {
+      await this.logsUtil.addLogs(
+        'error',
+        error.message || error,
+        'generateWorkSpaceUserReport'
       );
     }
   }
