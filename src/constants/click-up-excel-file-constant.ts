@@ -13,6 +13,7 @@ export const MINIMUM_WORKING_DAYS = 20;
 export const TASK_CLOSED_STATUS = [CLOSED_STATUS, REVIEW_STATUS];
 
 export const CODES_TO_PROJECT_MAPPING: any = {
+  'PROJECT HOPE':['Project Hope Namibia'],
   'ADMIN/2024': [
     'General Activities(Internal)',
     'Administration Department',
