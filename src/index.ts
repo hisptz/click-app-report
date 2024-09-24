@@ -18,8 +18,9 @@ async function starApp() {
     await appProcess.generateWorkSpaceFolderReport();
     await appProcess.generateWorkSpaceUserReport();
     await appProcess.setAllTask(fromDueDateLimit, toDueDateLimit);
-    await appProcess.generateTaskSummary(fromDueDateLimit, toDueDateLimit);
     await appProcess.generateSourceReportFile();
+    await appProcess.generateTaskSummary(fromDueDateLimit, toDueDateLimit);
+    await appProcess.generatePayrollForStaff();
     await appProcess.generateTimeSheetForIndividual(
       fromDueDateLimit,
       toDueDateLimit

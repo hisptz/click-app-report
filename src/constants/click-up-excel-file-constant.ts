@@ -13,7 +13,7 @@ export const MINIMUM_WORKING_DAYS = 20;
 export const TASK_CLOSED_STATUS = [CLOSED_STATUS, REVIEW_STATUS];
 
 export const CODES_TO_PROJECT_MAPPING: any = {
-  'PROJECT HOPE':['Project Hope Namibia'],
+  'PROJECT HOPE': ['Project Hope Namibia'],
   'ADMIN/2024': [
     'General Activities(Internal)',
     'Administration Department',
@@ -26,7 +26,8 @@ export const CODES_TO_PROJECT_MAPPING: any = {
     'Chandarua Klinik Dashboard',
     'CARPHA RTI',
     'Zamep MSDQI',
-    'Media & Public Relations','DHIS2 Analytics Messenger'
+    'Media & Public Relations',
+    'DHIS2 Analytics Messenger'
   ],
   'KB-LESOTHO/2024': ['USAID KB'],
   'GF-SEAF-HUB/2024': ['Global Fund Hub work'],
