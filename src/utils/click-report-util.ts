@@ -54,7 +54,7 @@ export class ClickUpReportUtil {
       .length;
   }
 
-  get IN_PROGRESS_STATUSTasksCount(): number {
+  get inProgressStatusTaksCount(): number {
     return _.filter(
       this._tasks || [],
       (task) => task.status === IN_PROGRESS_STATUS
