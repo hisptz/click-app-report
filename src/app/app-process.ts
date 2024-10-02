@@ -200,12 +200,8 @@ export class AppProcess {
         this._workingDays,
         this._tasks
       );
-      const individualPayroll = AppProcessUtil.payrollSummayByIndiviadual(
-        this._tasks
-      );
       const jsonDataObject = {
         'Overall summary': overallSummary,
-        'Salaries Breakdown': individualPayroll,
         'Individual summary': individualSummary,
         'Project summary': projectSummary,
         'DQA issues': dqaSummary
