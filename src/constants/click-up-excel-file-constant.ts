@@ -14,6 +14,7 @@ export const TASK_CLOSED_STATUS = [CLOSED_STATUS, REVIEW_STATUS];
 
 export const CODES_TO_PROJECT_MAPPING: any = {
   'PROJECT HOPE': ['Project Hope Namibia'],
+  'TIMR':['TimR V2'],
   'ADMIN/2024': [
     'General Activities(Internal)',
     'Administration Department',
