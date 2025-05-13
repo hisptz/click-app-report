@@ -1,4 +1,5 @@
 import { LogsUtil, AppUtil } from './utils';
+import { AppProcess } from './app';
 
 starApp();
 
@@ -7,15 +8,8 @@ async function starApp() {
   await logsUtil.clearLogs();
   await logsUtil.addLogs('info', 'start an app', 'app');
   try {
-    const { fromDueDateLimit, toDueDateLimit, workingDays } =
-      AppUtil.getStartEndDateLimit();
-    console.log({
-      fromDueDateLimit,
-      toDueDateLimit,
-      workingDays,
-      fromDate: AppUtil.getFormattedDate(fromDueDateLimit),
-      toDate: AppUtil.getFormattedDate(toDueDateLimit)
-    });
+    const appProcess = new AppProcess();
+    await appProcess.startAppProcess();
   } catch (error: any) {
     error = error.message || error;
     console.log({ error });
