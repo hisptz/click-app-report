@@ -1,7 +1,7 @@
-import { LogsUtil } from './logs-util';
 import * as _ from 'lodash';
 import xlsx from 'xlsx';
-import { FileUtil } from './file-util';
+import {} from './file-util';
+import { LogsUtil, FileUtil } from '.';
 
 export class ExcelUtil {
   private logsUtil: LogsUtil;

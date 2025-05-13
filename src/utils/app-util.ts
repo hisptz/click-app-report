@@ -1,5 +1,8 @@
 import moment from 'moment';
-import { MINIMUM_WORKING_DAYS } from '../constants/click-up-excel-file-constant';
+import {
+  MINIMUM_WORKING_DAYS,
+  MINIMUM_LAST_DAYS_REPORT_GENERATION
+} from '../constants';
 
 export class AppUtil {
   static getNumberOfHoursSpent(milliseconds: number) {
@@ -8,11 +11,15 @@ export class AppUtil {
 
   static getStartEndDateLimit() {
     const today = this.getFormattedDate(new Date());
-    const lastSevenDay = this.getFormattedDate(
-      new Date(new Date().setDate(new Date().getDate() - 7))
+    const lastDayForReport = this.getFormattedDate(
+      new Date(
+        new Date().setDate(
+          new Date().getDate() - MINIMUM_LAST_DAYS_REPORT_GENERATION
+        )
+      )
     );
     let workingDays = MINIMUM_WORKING_DAYS;
-    let fromDueDateLimit = new Date(lastSevenDay).getTime();
+    let fromDueDateLimit = new Date(lastDayForReport).getTime();
     let toDueDateLimit = new Date(today).getTime();
     try {
       const parameters = process.argv;

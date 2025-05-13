@@ -1,4 +1,4 @@
-import { ApiConfigModel } from '../models/api-config-model';
+import { ApiConfigModel } from '../models';
 
 export const apiConfig: ApiConfigModel = {
   teamId: 'team-id-from-click-up',
