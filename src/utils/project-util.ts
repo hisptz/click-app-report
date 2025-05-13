@@ -28,7 +28,6 @@ export class ProjectUtil {
     try {
       const url = `${this._baseUrl}/team/${this._teamId}/folder`;
       const response: any = await HttpUtil.getHttp(this._headers, url);
-      console.log(response);
       for (const folder of response.folders || []) {
         const projectList = this._getProjectListDetail(folder);
         projectFolderList.push(projectList);
@@ -92,7 +91,7 @@ export class ProjectUtil {
         })
       );
       await new ExcelUtil(
-        'Project Foleder List',
+        'project folder list',
         ADMIN_SUB_FOLDER
       ).writeToSingleSheetExcelFile(jsonData, false, 'Project');
     } catch (error: any) {
