@@ -1,4 +1,4 @@
-import { flattenDeep, map } from 'lodash';
+import { filter, first, flattenDeep, map, sortBy } from 'lodash';
 import { ExcelUtil, HttpUtil, LogsUtil } from '.';
 import { ApiProjectFolderModel } from '../models';
 import { apiConfig } from '../configs';
@@ -26,10 +26,10 @@ export class ProjectUtil {
       'getProjectFolderList'
     );
     try {
-      const url = `${this._baseUrl}/team/${this._teamId}/folder?archived=true`;
+      const url = `${this._baseUrl}/team/${this._teamId}/folder`;
       const response: any = await HttpUtil.getHttp(this._headers, url);
+      console.log(response);
       for (const folder of response.folders || []) {
-        console.log(folder);
         const projectList = this._getProjectListDetail(folder);
         projectFolderList.push(projectList);
       }
@@ -40,7 +40,7 @@ export class ProjectUtil {
         'getProjectFolderList'
       );
     }
-    return projectFolderList;
+    return sortBy(projectFolderList, 'name');
   }
 
   _getProjectListDetail(projectList: any): ApiProjectFolderModel {
@@ -61,7 +61,7 @@ export class ProjectUtil {
       id: `${projectList.id || ''}`,
       name: `${projectList.name || ''}`,
       statuses: flattenDeep(statuses),
-      lists: flattenDeep(lists)
+      lists: sortBy(flattenDeep(lists), 'name')
     };
   }
 
@@ -76,22 +76,25 @@ export class ProjectUtil {
       );
       const jsonData = flattenDeep(
         map(projectFolderList, (projectFolder: ApiProjectFolderModel) => {
+          const firstActivity = first(projectFolder.lists);
           return [
-            { project: projectFolder.name, subProject: '' },
+            { Project: projectFolder.name, Activity: firstActivity?.name },
             ...map(
-              projectFolder.lists || [],
+              filter(
+                projectFolder.lists || [],
+                (list: ApiProjectFolderModel) => list.id !== firstActivity?.id
+              ),
               (subProjectFolder: ApiProjectFolderModel) => {
-                return { project: '', subProject: subProjectFolder.name };
+                return { Project: '', Activity: subProjectFolder.name };
               }
-            ),
-            { project: '', subProject: '' }
+            )
           ];
         })
       );
       await new ExcelUtil(
         'Project Foleder List',
         ADMIN_SUB_FOLDER
-      ).writeToSingleSheetExcelFile(jsonData, true, 'Project');
+      ).writeToSingleSheetExcelFile(jsonData, false, 'Project');
     } catch (error: any) {
       await new LogsUtil().addLogs(
         'error',
