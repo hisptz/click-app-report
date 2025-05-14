@@ -9,6 +9,8 @@ export class UserUtil {
   private _teamId: string;
   private _headers: any;
 
+  private _fileName: string = 'project-team-members';
+
   constructor() {
     this._baseUrl = apiConfig.appBaseUrl;
     this._teamId = apiConfig.teamId;
@@ -31,7 +33,6 @@ export class UserUtil {
       const team = response.team || {};
       for (const member of team.members || []) {
         const user = member.user || {};
-        console.log(user);
         users.push({
           id: user.id || '',
           username: user.username || '',
@@ -56,7 +57,7 @@ export class UserUtil {
         'generateProjectTeamMembersReport'
       );
       await new ExcelUtil(
-        'project team members',
+        this._fileName,
         ADMIN_SUB_FOLDER
       ).writeToSingleSheetExcelFile(users, false, 'User List');
     } catch (error: any) {
