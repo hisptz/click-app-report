@@ -22,6 +22,7 @@
   "homepage": "https://github.com/chingalo/click-app-report#readme",
   "devDependencies": {
     "@types/lodash": "^4.14.176",
+    "@types/nodemailer": "^6.4.17",
     "@types/request": "^2.48.7",
     "@types/shelljs": "^0.8.9",
     "ts-node": "^10.4.0",
@@ -30,6 +31,7 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
+    "nodemailer": "^7.0.3",
     "prettier": "^2.5.1",
     "request": "^2.88.2",
     "shelljs": "^0.8.5",
