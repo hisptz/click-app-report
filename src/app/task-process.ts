@@ -36,6 +36,11 @@ export class TaskProcess {
 
   async generateSourceReportFile(tasks: Array<ApiProjectTaskModel>) {
     try {
+      await new LogsUtil().addLogs(
+        'info',
+        `Generating Task source report`,
+        'generateSourceReportFile'
+      );
       const reportUtil = new ReportUtil(tasks, CLICK_UP_REPORT_SOURCE_COLUMNS);
       await new ExcelUtil(
         this._clickUpReportFile,
@@ -52,6 +57,11 @@ export class TaskProcess {
 
   async generateTaskSummary(tasks: Array<ApiProjectTaskModel>) {
     try {
+      await new LogsUtil().addLogs(
+        'info',
+        `Generating Task summary`,
+        'generateTaskSummary'
+      );
       const { fromDueDateLimit, toDueDateLimit, workingDays } =
         AppUtil.getStartEndDateLimit();
       const fromDate = AppUtil.getFormattedDate(fromDueDateLimit);
@@ -86,6 +96,11 @@ export class TaskProcess {
 
   async generatePayrollForStaff(tasks: Array<ApiProjectTaskModel>) {
     try {
+      await new LogsUtil().addLogs(
+        'info',
+        `Generating Team payroll`,
+        'generatePayrollForStaff'
+      );
       const individualPayroll =
         AppProcessUtil.payrollSummayByIndiviadual(tasks);
       const jsonDataObject = {
@@ -107,7 +122,7 @@ export class TaskProcess {
   async generateTimeSheetForIndividual(tasks: Array<ApiProjectTaskModel>) {
     try {
       await new LogsUtil().addLogs(
-        'error',
+        'info',
         `Generating Team time sheets`,
         'generateTimeSheetForIndividual'
       );

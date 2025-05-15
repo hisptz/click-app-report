@@ -4,6 +4,9 @@ export const SUMMARY_REPORTS_SUB_FOLDER = 'summary-reports';
 export const ADMIN_SUB_FOLDER = 'admin';
 export const EXCEL_FOLDER = 'excels';
 
+export const ADMIN_REPORT_TYPE = 'admin-reports';
+export const TIMESHEET_REPORT_TYPE = 'timesheet-reports';
+
 export const COMPLETED_DATE_COLUMN = 'Task Completion Date';
 export const REVIEW_STATUS = 'review';
 export const CLOSED_STATUS = 'Closed';
