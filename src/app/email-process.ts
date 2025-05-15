@@ -18,11 +18,11 @@ export class EmailProcess {
     const { reportType } = AppUtil.getStartEndDateLimit();
     switch (reportType) {
       case TIMESHEET_REPORT_TYPE: {
-        console.log('Sending Monthly Timesheets');
+        await this._sendMonthlyTimesheets();
         break;
       }
       case ADMIN_REPORT_TYPE: {
-        console.log('Sending Admin reports');
+        await this._sendAdminMonthlyReports();
         break;
       }
     }
