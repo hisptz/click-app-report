@@ -1,8 +1,7 @@
 import { filter, first, keys } from 'lodash';
-import { ApiProjectTaskModel } from '../models/api-project-task-model';
-import { ClickUpReportUtil } from './click-report-util';
-import { TASK_CLOSED_STATUS } from '../constants/click-up-excel-file-constant';
-import { AppUtil } from './app-util';
+import { ApiProjectTaskModel } from '../models';
+import { AppUtil, ReportUtil } from '.';
+import { TASK_CLOSED_STATUS } from '../constants';
 
 export class AppProcessUtil {
   static getIndividualTimeSheetSummary(
@@ -29,12 +28,12 @@ export class AppProcessUtil {
       }
     ];
     const tasks = filter(
-      new ClickUpReportUtil(tasksByAssignee[assignee]).sortedTasksByDate,
+      new ReportUtil(tasksByAssignee[assignee]).sortedTasksByDate,
       (task) =>
         TASK_CLOSED_STATUS.includes(task.status) &&
         parseFloat(task.timeSpent) > 0
     );
-    const timeSheetReportUtil = new ClickUpReportUtil(tasks);
+    const timeSheetReportUtil = new ReportUtil(tasks);
     for (const task of timeSheetReportUtil.sortedTasksByDate) {
       summaryJson.push({
         item1: AppUtil.getTimeSheetDate(task.dueDate),
@@ -92,17 +91,17 @@ export class AppProcessUtil {
       { item1: 'Full Name', item2: 'Number of Days spent' }
     ];
     try {
-      const clickUpReportUtil = new ClickUpReportUtil(allTasks);
-      const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
+      const reportUtil = new ReportUtil(allTasks);
+      const tasksByAssignee = reportUtil.tasksByAssignee;
       for (const assignee of keys(tasksByAssignee)) {
         const tasks = filter(
-          new ClickUpReportUtil(tasksByAssignee[assignee]).sortedTasksByDate,
+          new ReportUtil(tasksByAssignee[assignee]).sortedTasksByDate,
           (task) =>
             TASK_CLOSED_STATUS.includes(task.status) &&
             parseFloat(task.timeSpent) > 0
         );
         const numberOfWeekEndDays = 2 * parseInt(`${workingDays / 5}`, 10);
-        const assigneeReportUtil = new ClickUpReportUtil(tasks);
+        const assigneeReportUtil = new ReportUtil(tasks);
         const totalDaysSpent = parseFloat(assigneeReportUtil.totalDaysSpent);
         const maximunDayOffLimit = parseFloat((workingDays / 8).toFixed(1));
         if (
@@ -131,26 +130,26 @@ export class AppProcessUtil {
       { item1: `` }
     ];
     try {
-      const clickUpReportUtil = new ClickUpReportUtil(allTasks);
+      const reportUtil = new ReportUtil(allTasks);
       summaryJson.push({
         item1: 'Overall Summary'
       });
       summaryJson.push(
         {
           item1: 'Completeness',
-          item2: `${clickUpReportUtil.tasksCompletenesRate}%`
+          item2: `${reportUtil.tasksCompletenesRate}%`
         },
         {
           item1: 'Timeliness',
-          item2: `${clickUpReportUtil.tasksTimelinessRate}%`
+          item2: `${reportUtil.tasksTimelinessRate}%`
         },
         {
           item1: 'Total Hours Spent',
-          item2: `${clickUpReportUtil.totalHoursSpent}`
+          item2: `${reportUtil.totalHoursSpent}`
         },
         {
           item1: 'Total Days Spent',
-          item2: `${clickUpReportUtil.totalDaysSpent}`
+          item2: `${reportUtil.totalDaysSpent}`
         },
         { item1: '' },
         { item1: 'Overall Distribution by Status' },
@@ -162,11 +161,11 @@ export class AppProcessUtil {
           item5: 'Total'
         },
         {
-          item1: `${clickUpReportUtil.openTasksCount}`,
-          item2: `${clickUpReportUtil.inProgressStatusTaksCount}`,
-          item3: `${clickUpReportUtil.onReviewTasksCount}`,
-          item4: `${clickUpReportUtil.onCloseTasksCount}`,
-          item5: `${clickUpReportUtil.totalTasks}`
+          item1: `${reportUtil.openTasksCount}`,
+          item2: `${reportUtil.inProgressStatusTaksCount}`,
+          item3: `${reportUtil.onReviewTasksCount}`,
+          item4: `${reportUtil.onCloseTasksCount}`,
+          item5: `${reportUtil.totalTasks}`
         },
         { item1: '' },
         { item1: 'Overall Distribution by Project/List Name' },
@@ -179,18 +178,16 @@ export class AppProcessUtil {
           item6: 'Total'
         }
       );
-      const tasksByProjectList = clickUpReportUtil.tasksByProject;
+      const tasksByProjectList = reportUtil.tasksByProject;
       for (const project of keys(tasksByProjectList).sort()) {
-        const projectClickUpReportUtil = new ClickUpReportUtil(
-          tasksByProjectList[project]
-        );
+        const projectReportUtil = new ReportUtil(tasksByProjectList[project]);
         summaryJson.push({
           item1: `${project}`,
-          item2: `${projectClickUpReportUtil.openTasksCount}`,
-          item3: `${projectClickUpReportUtil.inProgressStatusTaksCount}`,
-          item4: `${projectClickUpReportUtil.onReviewTasksCount}`,
-          item5: `${projectClickUpReportUtil.onCloseTasksCount}`,
-          item6: `${projectClickUpReportUtil.totalTasks}`
+          item2: `${projectReportUtil.openTasksCount}`,
+          item3: `${projectReportUtil.inProgressStatusTaksCount}`,
+          item4: `${projectReportUtil.onReviewTasksCount}`,
+          item5: `${projectReportUtil.onCloseTasksCount}`,
+          item6: `${projectReportUtil.totalTasks}`
         });
       }
     } catch (error) {}
@@ -200,29 +197,27 @@ export class AppProcessUtil {
   static overallTaskByProjectSummary(allTasks: ApiProjectTaskModel[]): any {
     const summaryJson: any[] = [];
     try {
-      const clickUpReportUtil = new ClickUpReportUtil(allTasks);
-      const tasksByProjectList = clickUpReportUtil.tasksByProject;
+      const reportUtil = new ReportUtil(allTasks);
+      const tasksByProjectList = reportUtil.tasksByProject;
       for (const project of keys(tasksByProjectList).sort()) {
-        const projectClickUpReportUtil = new ClickUpReportUtil(
-          tasksByProjectList[project]
-        );
+        const projectUpReportUtil = new ReportUtil(tasksByProjectList[project]);
         summaryJson.push(
           { item1: `${project}` },
           {
             item1: 'Completeness',
-            item2: `${projectClickUpReportUtil.tasksCompletenesRate}%`
+            item2: `${projectUpReportUtil.tasksCompletenesRate}%`
           },
           {
             item1: 'Timeliness',
-            item2: `${projectClickUpReportUtil.tasksTimelinessRate}%`
+            item2: `${projectUpReportUtil.tasksTimelinessRate}%`
           },
           {
             item1: 'Total Hours Spent',
-            item2: `${projectClickUpReportUtil.totalHoursSpent}`
+            item2: `${projectUpReportUtil.totalHoursSpent}`
           },
           {
             item1: 'Total Days Spent',
-            item2: `${projectClickUpReportUtil.totalDaysSpent}`
+            item2: `${projectUpReportUtil.totalDaysSpent}`
           },
           { item1: 'Distribution by Status' },
           {
@@ -233,11 +228,11 @@ export class AppProcessUtil {
             item5: 'Total'
           },
           {
-            item1: `${projectClickUpReportUtil.openTasksCount}`,
-            item2: `${projectClickUpReportUtil.inProgressStatusTaksCount}`,
-            item3: `${projectClickUpReportUtil.onReviewTasksCount}`,
-            item4: `${projectClickUpReportUtil.onCloseTasksCount}`,
-            item5: `${projectClickUpReportUtil.totalTasks}`
+            item1: `${projectUpReportUtil.openTasksCount}`,
+            item2: `${projectUpReportUtil.inProgressStatusTaksCount}`,
+            item3: `${projectUpReportUtil.onReviewTasksCount}`,
+            item4: `${projectUpReportUtil.onCloseTasksCount}`,
+            item5: `${projectUpReportUtil.totalTasks}`
           },
           { item1: 'Distribution by Assignee and status' },
           {
@@ -252,21 +247,19 @@ export class AppProcessUtil {
             item9: 'Total'
           }
         );
-        const tasksByAssignee = projectClickUpReportUtil.tasksByAssignee;
+        const tasksByAssignee = projectUpReportUtil.tasksByAssignee;
         for (const assignee of keys(tasksByAssignee).sort()) {
-          const assigneeClickUpReportUtil = new ClickUpReportUtil(
-            tasksByAssignee[assignee]
-          );
+          const assigneeReportUtil = new ReportUtil(tasksByAssignee[assignee]);
           summaryJson.push({
             item1: `${assignee}`,
-            item2: `${assigneeClickUpReportUtil.tasksCompletenesRate}`,
-            item3: `${assigneeClickUpReportUtil.tasksTimelinessRate}`,
-            item4: `${assigneeClickUpReportUtil.totalHoursSpent}`,
-            item5: `${assigneeClickUpReportUtil.openTasksCount}`,
-            item6: `${assigneeClickUpReportUtil.inProgressStatusTaksCount}`,
-            item7: `${assigneeClickUpReportUtil.onReviewTasksCount}`,
-            item8: `${assigneeClickUpReportUtil.onCloseTasksCount}`,
-            item9: `${assigneeClickUpReportUtil.totalTasks}`
+            item2: `${assigneeReportUtil.tasksCompletenesRate}`,
+            item3: `${assigneeReportUtil.tasksTimelinessRate}`,
+            item4: `${assigneeReportUtil.totalHoursSpent}`,
+            item5: `${assigneeReportUtil.openTasksCount}`,
+            item6: `${assigneeReportUtil.inProgressStatusTaksCount}`,
+            item7: `${assigneeReportUtil.onReviewTasksCount}`,
+            item8: `${assigneeReportUtil.onCloseTasksCount}`,
+            item9: `${assigneeReportUtil.totalTasks}`
           });
         }
         summaryJson.push({ item1: '' });
@@ -278,29 +271,27 @@ export class AppProcessUtil {
   static overallTaskByAssignedSummary(allTasks: ApiProjectTaskModel[]): any {
     const summaryJson: any[] = [];
     try {
-      const clickUpReportUtil = new ClickUpReportUtil(allTasks);
+      const clickUpReportUtil = new ReportUtil(allTasks);
       const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
       for (const assignee of keys(tasksByAssignee).sort()) {
-        const assigneeClickUpReportUtil = new ClickUpReportUtil(
-          tasksByAssignee[assignee]
-        );
+        const assigneeReportUtil = new ReportUtil(tasksByAssignee[assignee]);
         summaryJson.push(
           { item1: `${assignee}` },
           {
             item1: 'Completeness',
-            item2: `${assigneeClickUpReportUtil.tasksCompletenesRate}%`
+            item2: `${assigneeReportUtil.tasksCompletenesRate}%`
           },
           {
             item1: 'Timeliness',
-            item2: `${assigneeClickUpReportUtil.tasksTimelinessRate}%`
+            item2: `${assigneeReportUtil.tasksTimelinessRate}%`
           },
           {
             item1: 'Total Hours Spent',
-            item2: `${assigneeClickUpReportUtil.totalHoursSpent}`
+            item2: `${assigneeReportUtil.totalHoursSpent}`
           },
           {
             item1: 'Total Days Spent',
-            item2: `${assigneeClickUpReportUtil.totalDaysSpent}`
+            item2: `${assigneeReportUtil.totalDaysSpent}`
           },
           { item1: 'Distribution by Status' },
           {
@@ -311,22 +302,20 @@ export class AppProcessUtil {
             item5: 'Total'
           },
           {
-            item1: `${assigneeClickUpReportUtil.openTasksCount}`,
-            item2: `${assigneeClickUpReportUtil.inProgressStatusTaksCount}`,
-            item3: `${assigneeClickUpReportUtil.onReviewTasksCount}`,
-            item4: `${assigneeClickUpReportUtil.onCloseTasksCount}`,
-            item5: `${assigneeClickUpReportUtil.totalTasks}`
+            item1: `${assigneeReportUtil.openTasksCount}`,
+            item2: `${assigneeReportUtil.inProgressStatusTaksCount}`,
+            item3: `${assigneeReportUtil.onReviewTasksCount}`,
+            item4: `${assigneeReportUtil.onCloseTasksCount}`,
+            item5: `${assigneeReportUtil.totalTasks}`
           },
           { item1: 'Distribution by Project/List Name' }
         );
-        const tasksByProjectList = assigneeClickUpReportUtil.tasksByProject;
+        const tasksByProjectList = assigneeReportUtil.tasksByProject;
         for (const project of keys(tasksByProjectList).sort()) {
-          const projectClickUpReportUtil = new ClickUpReportUtil(
-            tasksByProjectList[project]
-          );
+          const projectReportUtil = new ReportUtil(tasksByProjectList[project]);
           summaryJson.push({
             item1: `${project}`,
-            item2: `${projectClickUpReportUtil.totalTasks}`
+            item2: `${projectReportUtil.totalTasks}`
           });
         }
         summaryJson.push({ item1: '' });
@@ -338,25 +327,23 @@ export class AppProcessUtil {
   static payrollSummayByIndiviadual(allTasks: ApiProjectTaskModel[]): any {
     const summaryJson: any[] = [];
     try {
-      const clickUpReportUtil = new ClickUpReportUtil(allTasks);
-      const tasksByAssignee = clickUpReportUtil.tasksByAssignee;
+      const reportUtil = new ReportUtil(allTasks);
+      const tasksByAssignee = reportUtil.tasksByAssignee;
       for (const assignee of keys(tasksByAssignee).sort()) {
-        const assigneeClickUpReportUtil = new ClickUpReportUtil(
-          tasksByAssignee[assignee]
-        );
+        const assigneeReportUtil = new ReportUtil(tasksByAssignee[assignee]);
         summaryJson.push(
           { item1: `${assignee}` },
           {
             item1: 'Completeness',
-            item2: `${assigneeClickUpReportUtil.tasksCompletenesRate}%`
+            item2: `${assigneeReportUtil.tasksCompletenesRate}%`
           },
           {
             item1: 'Timeliness',
-            item2: `${assigneeClickUpReportUtil.tasksTimelinessRate}%`
+            item2: `${assigneeReportUtil.tasksTimelinessRate}%`
           },
           {
             item1: 'Total Hours Spent',
-            item2: `${assigneeClickUpReportUtil.totalHoursSpent}`
+            item2: `${assigneeReportUtil.totalHoursSpent}`
           },
           { item1: 'Distribution by Project using hours' },
           {
@@ -366,22 +353,18 @@ export class AppProcessUtil {
             item4: 'Percentage'
           }
         );
-        const tasksByProjectList = assigneeClickUpReportUtil.tasksByProject;
-        const totalHoursSpent = parseFloat(
-          assigneeClickUpReportUtil.totalHoursSpent
-        );
+        const tasksByProjectList = assigneeReportUtil.tasksByProject;
+        const totalHoursSpent = parseFloat(assigneeReportUtil.totalHoursSpent);
         for (const project of keys(tasksByProjectList).sort()) {
-          const projectClickUpReportUtil = new ClickUpReportUtil(
-            tasksByProjectList[project]
-          );
+          const projectReportUtil = new ReportUtil(tasksByProjectList[project]);
           const hoursSpentOnProject = parseFloat(
-            projectClickUpReportUtil.totalHoursSpent
+            projectReportUtil.totalHoursSpent
           );
           const percentage = (
             (hoursSpentOnProject / totalHoursSpent) *
             100
           ).toFixed(1);
-          const projectObj = first(projectClickUpReportUtil.sortedTasksByDate);
+          const projectObj = first(projectReportUtil.sortedTasksByDate);
           summaryJson.push({
             item1: `${project}`,
             item2: `${projectObj?.projectCode}`,

@@ -7,11 +7,11 @@ import {
   REVIEW_STATUS,
   TASK_CLOSED_STATUS,
   TOTAL_NUMBER_OF_HOURS_PER_DAY
-} from '../constants/click-up-excel-file-constant';
-import { ApiProjectTaskModel } from '../models/api-project-task-model';
-import { AppUtil } from './app-util';
+} from '../constants';
+import { ApiProjectTaskModel } from '../models';
+import { AppUtil } from '.';
 
-export class ClickUpReportUtil {
+export class ReportUtil {
   private _tasks: Array<ApiProjectTaskModel>;
   private _excelJsonConfig: any;
 

@@ -1,17 +1,18 @@
-import { LogsUtil } from './logs-util';
 import * as _ from 'lodash';
 import xlsx from 'xlsx';
-import { FileUtil } from './file-util';
+import {} from './file-util';
+import { LogsUtil, FileUtil } from '.';
+import { EXCEL_FOLDER } from '../constants';
 
 export class ExcelUtil {
   private logsUtil: LogsUtil;
   private fileUtil: FileUtil;
   private defaultSheet: string = 'Sheet';
-  private excelDir: string = 'excels';
+
   private excelFileName: string;
 
   constructor(excelFileName: string, subDir = '') {
-    let excelDir = subDir !== '' ? `${this.excelDir}/${subDir}` : this.excelDir;
+    let excelDir = subDir !== '' ? `${EXCEL_FOLDER}/${subDir}` : EXCEL_FOLDER;
     this.excelFileName = excelFileName;
     this.logsUtil = new LogsUtil();
     this.fileUtil = new FileUtil(excelDir, this.excelFileName, 'xlsx');

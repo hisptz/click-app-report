@@ -1,4 +1,4 @@
-import { FileUtil } from './file-util';
+import { FileUtil } from '.';
 import moment from 'moment';
 
 export class LogsUtil {
