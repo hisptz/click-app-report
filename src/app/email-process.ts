@@ -36,7 +36,6 @@ export class EmailProcess {
     );
     const users = await new UserUtil().getProjectTeamMembers();
     const receiverEmails = map(users, (user) => user.email ?? '');
-    console.log('receiverEmails', receiverEmails);
     const subject = `[${moment().format(
       'MMMM YYYY'
     )}] Monthly Timesheets from ClickUp System`;
@@ -55,7 +54,7 @@ export class EmailProcess {
     );
     await new EmailNotificationUtil().sendEmail(
       subject,
-      emailConfig.adminEmails,
+      receiverEmails,
       htmlMessage,
       fileNames,
       fileDir
