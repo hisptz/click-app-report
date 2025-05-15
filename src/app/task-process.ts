@@ -2,6 +2,7 @@ import { keys } from 'lodash';
 import {
   CLICK_UP_REPORT_SOURCE_COLUMNS,
   REPORTS_SUB_FOLDER,
+  SUMMARY_REPORTS_SUB_FOLDER,
   TIMESHEETS_SUB_FOLDER
 } from '../constants';
 import { ApiProjectTaskModel } from '../models';
@@ -30,7 +31,6 @@ export class TaskProcess {
       await this.generatePayrollForStaff(tasks);
       await this.generateTimeSheetForIndividual(tasks);
       await this.generateSourceReportFile(tasks);
-      //TODO send email with the reports
     }
   }
 
@@ -73,7 +73,7 @@ export class TaskProcess {
       };
       await new ExcelUtil(
         this._reportFile,
-        REPORTS_SUB_FOLDER
+        SUMMARY_REPORTS_SUB_FOLDER
       ).writeToMultipleSheetExcelFile(jsonDataObject, true);
     } catch (error: any) {
       await new LogsUtil().addLogs(

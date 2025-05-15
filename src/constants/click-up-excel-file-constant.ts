@@ -1,5 +1,6 @@
 export const TIMESHEETS_SUB_FOLDER = 'timesheets';
 export const REPORTS_SUB_FOLDER = 'reports';
+export const SUMMARY_REPORTS_SUB_FOLDER = 'summary-reports';
 export const ADMIN_SUB_FOLDER = 'admin';
 export const EXCEL_FOLDER = 'excels';
 
