@@ -19,6 +19,7 @@ export class AppUtil {
       )
     );
     let workingDays = MINIMUM_WORKING_DAYS;
+    let reportType = '';
     let fromDueDateLimit = new Date(lastDayForReport).getTime();
     let toDueDateLimit = new Date(today).getTime();
     try {
@@ -26,6 +27,8 @@ export class AppUtil {
       const fromIndex = 2;
       const toIndex = 3;
       const workingDaysIndex = 4;
+      const reportTypeIndex = 5;
+      reportType = parameters[reportTypeIndex] ?? reportType;
       workingDays = parameters[workingDaysIndex]
         ? parseInt(parameters[workingDaysIndex], 10)
         : workingDays;
@@ -49,7 +52,7 @@ export class AppUtil {
             : new Date(parameters[fromIndex]).getTime();
       }
     } catch (error) {}
-    return { fromDueDateLimit, toDueDateLimit, workingDays };
+    return { fromDueDateLimit, toDueDateLimit, workingDays, reportType };
   }
 
   static getFormattedDate(date: any) {
