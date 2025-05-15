@@ -1,10 +1,12 @@
 import { map } from 'lodash';
 import {
+  ADMIN_REPORT_TYPE,
   EXCEL_FOLDER,
   REPORTS_SUB_FOLDER,
+  TIMESHEET_REPORT_TYPE,
   TIMESHEETS_SUB_FOLDER
 } from '../constants';
-import { FileUtil, UserUtil } from '../utils';
+import { AppUtil, FileUtil, LogsUtil, UserUtil } from '../utils';
 import { EmailNotificationUtil } from '../utils/email-notification-util';
 import moment from 'moment';
 import { emailConfig } from '../configs';
@@ -13,11 +15,25 @@ export class EmailProcess {
   constructor() {}
 
   async startEmailProcess() {
-    await this._sendMonthlyTimesheets();
-    await this._sendAdminMonthlyReports();
+    const { reportType } = AppUtil.getStartEndDateLimit();
+    switch (reportType) {
+      case TIMESHEET_REPORT_TYPE: {
+        console.log('Sending Monthly Timesheets');
+        break;
+      }
+      case ADMIN_REPORT_TYPE: {
+        console.log('Sending Admin reports');
+        break;
+      }
+    }
   }
 
   private async _sendMonthlyTimesheets() {
+    await new LogsUtil().addLogs(
+      'info',
+      `Sending Monthly Timesheets`,
+      '_sendMonthlyTimesheets'
+    );
     const users = await new UserUtil().getProjectTeamMembers();
     const receiverEmails = map(users, (user) => user.email ?? '');
     console.log('receiverEmails', receiverEmails);
@@ -47,6 +63,11 @@ export class EmailProcess {
   }
 
   private async _sendAdminMonthlyReports() {
+    await new LogsUtil().addLogs(
+      'info',
+      `Sending Admin Monthly Reports`,
+      '_sendAdminMonthlyReports'
+    );
     const subject = `[${moment().format(
       'MMMM YYYY'
     )}] Staff Time Tracking Summary Report from ClickUp System`;
