@@ -15,7 +15,20 @@ export const MINIMUM_WORKING_DAYS = 20;
 export const MINIMUM_LAST_DAYS_REPORT_GENERATION = 7;
 export const TASK_CLOSED_STATUS = [CLOSED_STATUS, REVIEW_STATUS];
 
-export const CODES_TO_PROJECT_MAPPING: any = {};
+export const CODES_TO_PROJECT_MAPPING: any = {
+  'HISP- UIO/2025': [
+    'Climate & Health',
+    'GAVI Global - Data Use Apps',
+    'GAVI Global - WHO Afro',
+    'GAVI TCA - Eritrea',
+    'GAVI TCA - Somalia',
+    'GAVI TCA - South Sudan',
+    'GAVI TCA - Tanzania',
+    'General HISP Support (UiO)'
+  ],
+  'DHIS2-Messenger/2025': ['DHIS2 Analytics Messenger'],
+  'PATH - TIMR/2025': ['TimR V2']
+};
 
 export const CLICK_UP_REPORT_SOURCE_COLUMNS: any = {
   project: 'PROJECT',
