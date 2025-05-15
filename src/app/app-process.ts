@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { LogsUtil } from '../utils';
-import { ProjectProcess, TaskProcess, UserProcess } from '.';
+import { ProjectProcess, TaskProcess, UserProcess, EmailProcess } from '.';
 
 export class AppProcess {
   constructor() {}
@@ -10,6 +10,7 @@ export class AppProcess {
     await new ProjectProcess().startProjectProcess();
     await new UserProcess().startUserProcess();
     await new TaskProcess().startTaskProcess();
+    await new EmailProcess().startEmailProcess();
     await new LogsUtil().addLogs('info', 'End of an app process', 'app');
   }
 }
