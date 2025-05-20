@@ -9,6 +9,17 @@ export class AppUtil {
     return (milliseconds / (1000 * 60 * 60)).toFixed(1);
   }
 
+  static isTodayNthDayOfMonth(dayOfMonth: number): boolean {
+    let isToday = false;
+    const today = new Date();
+    if (dayOfMonth < 1 || dayOfMonth > 31) {
+      isToday;
+    } else {
+      isToday = today.getDate() === dayOfMonth;
+    }
+    return isToday;
+  }
+
   static getStartEndDateLimit() {
     const today = this.getFormattedDate(new Date());
     const lastDayForReport = this.getFormattedDate(
