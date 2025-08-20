@@ -1,4 +1,4 @@
-import { keys } from 'lodash';
+import { keys, filter, isEmpty } from 'lodash';
 import {
   CLICK_UP_REPORT_SOURCE_COLUMNS,
   REPORTS_SUB_FOLDER,
@@ -14,6 +14,7 @@ import {
   ReportUtil,
   TaskUtil
 } from '../utils';
+import { apiConfig } from '../configs';
 
 export class TaskProcess {
   private _reportFile: string = `click-up-summary-report`;
@@ -23,14 +24,26 @@ export class TaskProcess {
   constructor() {}
 
   async startTaskProcess() {
+    const { selectedProjects, isGroupedTimeSheets } = apiConfig;
     const taskUtil = new TaskUtil();
-    const tasks: Array<ApiProjectTaskModel> =
-      await taskUtil.getAllProjectTasks();
+    const tasks: Array<ApiProjectTaskModel> = filter(
+      await taskUtil.getAllProjectTasks(),
+      (task) => {
+        const { projectCode } = task;
+        return !isEmpty(selectedProjects)
+          ? selectedProjects.includes(projectCode)
+          : true;
+      }
+    );
     if (tasks.length > 0) {
+      await this.generateSourceReportFile(tasks);
       await this.generateTaskSummary(tasks);
       await this.generatePayrollForStaff(tasks);
-      await this.generateTimeSheetForIndividual(tasks);
-      await this.generateSourceReportFile(tasks);
+      if (isGroupedTimeSheets) {
+        await this.generateGroupedTimeSheets(tasks);
+      } else {
+        await this.generateTimeSheetForIndividual(tasks);
+      }
     }
   }
 
