@@ -152,4 +152,45 @@ export class TaskProcess {
       );
     }
   }
+
+  async generateGroupedTimeSheets(tasks: Array<ApiProjectTaskModel>) {
+    try {
+      await new LogsUtil().addLogs(
+        'info',
+        `Generating Grouped Time Sheets`,
+        'generateGroupedTimeSheets'
+      );
+      const { fromDueDateLimit, toDueDateLimit } =
+        AppUtil.getStartEndDateLimit();
+      const fromDate = AppUtil.getTimeSheetDate(fromDueDateLimit);
+      const toDate = AppUtil.getTimeSheetDate(toDueDateLimit);
+      const reportUtil = new ReportUtil(tasks);
+      const tasksByAssignee = reportUtil.tasksByAssignee;
+
+      const fileName = `${AppUtil.getGroupedTimeSheetDate(
+        fromDueDateLimit
+      )} Timesheets`;
+      const jsonDataObject: any = {};
+      for (const assignee of keys(tasksByAssignee).sort()) {
+        jsonDataObject[assignee] = AppProcessUtil.getIndividualTimeSheetSummary(
+          fromDate,
+          toDate,
+          tasksByAssignee,
+          assignee
+        );
+      }
+      if (!isEmpty(keys(jsonDataObject))) {
+        await new ExcelUtil(
+          fileName,
+          TIMESHEETS_SUB_FOLDER
+        ).writeToMultipleSheetExcelFile(jsonDataObject, true);
+      }
+    } catch (error: any) {
+      await new LogsUtil().addLogs(
+        'error',
+        error.message || error,
+        'generateGroupedTimeSheets'
+      );
+    }
+  }
 }
