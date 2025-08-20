@@ -89,6 +89,14 @@ export class AppUtil {
     return moment(dateObject).format('D MMMM YYYY');
   }
 
+  static getGroupedTimeSheetDate(date: any): string {
+    let dateObject = new Date(date);
+    if (isNaN(dateObject.getDate())) {
+      dateObject = new Date();
+    }
+    return moment(dateObject).format('MMMM YYYY');
+  }
+
   static isDateInRangeOfDate(date: any, startDate: any, endDate: any) {
     date = moment(date, 'YYYY-MM-DD');
     startDate = moment(startDate, 'YYYY-MM-DD');
