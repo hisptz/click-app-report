@@ -1,5 +1,5 @@
-import { sortBy } from 'lodash';
-import { ExcelUtil, HttpUtil, LogsUtil } from '.';
+import { map, sortBy } from 'lodash';
+import { AppUtil, ExcelUtil, HttpUtil, LogsUtil } from '.';
 import { apiConfig } from '../configs';
 import { ApiProjectUserModel } from '../models';
 import { ADMIN_SUB_FOLDER } from '../constants';
@@ -36,7 +36,11 @@ export class UserUtil {
         users.push({
           id: user.id || '',
           username: user.username || '',
-          email: user.email || ''
+          email: user.email || '',
+          dateInvited:
+            AppUtil.getFormattedDate(parseInt(user.date_invited, 10)) || '',
+          dateJoined:
+            AppUtil.getFormattedDate(parseInt(user.date_joined, 10)) || ''
         });
       }
     } catch (error: any) {
@@ -59,7 +63,18 @@ export class UserUtil {
       await new ExcelUtil(
         this._fileName,
         ADMIN_SUB_FOLDER
-      ).writeToSingleSheetExcelFile(users, false, 'User List');
+      ).writeToSingleSheetExcelFile(
+        map(users, (user) => {
+          return {
+            'Full Name': user.username || '',
+            Email: user.email || '',
+            'Date Invited': user.dateInvited || '',
+            'Date Joined': user.dateJoined || ''
+          };
+        }),
+        false,
+        'User List'
+      );
     } catch (error: any) {
       await new LogsUtil().addLogs(
         'error',
