@@ -1,4 +1,3 @@
-import { map } from 'lodash';
 import {
   ADMIN_REPORT_TYPE,
   EXCEL_FOLDER,
@@ -6,15 +5,16 @@ import {
   TIMESHEET_REPORT_TYPE,
   TIMESHEETS_SUB_FOLDER
 } from '../constants';
-import { AppUtil, FileUtil, LogsUtil, UserUtil } from '../utils';
+import { AppUtil, ExcelUtil, FileUtil, LogsUtil, UserUtil } from '../utils';
 import { EmailNotificationUtil } from '../utils/email-notification-util';
 import moment from 'moment';
 import { emailConfig } from '../configs';
+import { ApiProjectUserModel } from '../models';
 
 export class EmailProcess {
   constructor() {}
 
-  async startEmailProcess() {
+  async startEmailProcess(users: Array<ApiProjectUserModel> = []) {
     const { reportType } = AppUtil.getStartEndDateLimit();
     switch (reportType) {
       case TIMESHEET_REPORT_TYPE: {
@@ -28,14 +28,25 @@ export class EmailProcess {
     }
   }
 
-  private async _sendMonthlyTimesheets() {
+  private async _sendMonthlyTimesheets(users: Array<ApiProjectUserModel> = []) {
     await new LogsUtil().addLogs(
       'info',
       `Sending Monthly Timesheets`,
       '_sendMonthlyTimesheets'
     );
-    const users = await new UserUtil().getProjectTeamMembers();
-    const receiverEmails = map(users, (user) => user.email ?? '');
+    const fileNames = this._getFileNames(
+      `${EXCEL_FOLDER}/${TIMESHEETS_SUB_FOLDER}`
+    );
+    const receiverEmails: string[] = ['profschingalo@gmail.com'];
+    for (const user of users) {
+      const userFileName = new ExcelUtil(
+        `[${user.username}]Timesheet`,
+        TIMESHEETS_SUB_FOLDER
+      ).formattedExecelFileName;
+      if (fileNames.includes(userFileName) && user.email) {
+        receiverEmails.push(user.email);
+      }
+    }
     const subject = `[${moment().format(
       'MMMM YYYY'
     )}] Monthly Timesheets from ClickUp System`;
@@ -46,15 +57,13 @@ export class EmailProcess {
     )}</b> as <i>${moment().format('MMMM Do YYYY, h:mm:ss a')}</i>.</p>
     <p>Best Regards,</p>
     `;
-    const fileNames = this._getFileNames(
-      `${EXCEL_FOLDER}/${TIMESHEETS_SUB_FOLDER}`
-    );
     const fileDir = this._getFullDirName(
       `${EXCEL_FOLDER}/${TIMESHEETS_SUB_FOLDER}`
     );
     await new EmailNotificationUtil().sendEmail(
       subject,
       receiverEmails,
+      emailConfig.adminEmails,
       htmlMessage,
       fileNames,
       fileDir
@@ -86,6 +95,7 @@ export class EmailProcess {
     await new EmailNotificationUtil().sendEmail(
       subject,
       emailConfig.adminEmails,
+      [],
       htmlMessage,
       fileNames,
       fileDir

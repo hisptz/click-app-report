@@ -20,6 +20,7 @@ export class EmailNotificationUtil {
   async sendEmail(
     subject: string,
     receiverEmails: string[],
+    ccEmails: string[] = [],
     htmlMessage: string,
     fileNames: string[],
     fileDir: string = ''
@@ -27,6 +28,7 @@ export class EmailNotificationUtil {
     try {
       await this._transporter.sendMail({
         from: `${emailConfig.senderName} ${emailConfig.senderEmail}`,
+        cc: ccEmails.join(','),
         to: receiverEmails.join(', '),
         subject: subject,
         html: htmlMessage,

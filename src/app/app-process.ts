@@ -9,12 +9,11 @@ export class AppProcess {
     const { reportType } = AppUtil.getStartEndDateLimit();
     await new LogsUtil().addLogs('info', 'Start of an app process', 'app');
     await new ProjectProcess().startProjectProcess();
-    await new UserProcess().startUserProcess();
+    const users = await new UserProcess().startUserProcess();
     await new TaskProcess().startTaskProcess();
     if (reportType !== '') {
-      await new EmailProcess().startEmailProcess();
+      await new EmailProcess().startEmailProcess(users);
     }
-
     await new LogsUtil().addLogs('info', 'End of an app process', 'app');
   }
 }
