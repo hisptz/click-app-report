@@ -1,4 +1,3 @@
-import { map } from 'lodash';
 import {
   ADMIN_REPORT_TYPE,
   EXCEL_FOLDER,
