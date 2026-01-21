@@ -18,6 +18,10 @@ export class ExcelUtil {
     this.fileUtil = new FileUtil(excelDir, this.excelFileName, 'xlsx');
   }
 
+  get formattedExecelFileName(): string {
+    return this.fileUtil.formattedFileName;
+  }
+
   async writeToSingleSheetExcelFile(
     jsonData: any,
     skipHeader = false,
