@@ -18,7 +18,7 @@ export class EmailProcess {
     const { reportType } = AppUtil.getStartEndDateLimit();
     switch (reportType) {
       case TIMESHEET_REPORT_TYPE: {
-        await this._sendMonthlyTimesheets();
+        await this._sendMonthlyTimesheets(users);
         break;
       }
       case ADMIN_REPORT_TYPE: {
@@ -37,7 +37,8 @@ export class EmailProcess {
     const fileNames = this._getFileNames(
       `${EXCEL_FOLDER}/${TIMESHEETS_SUB_FOLDER}`
     );
-    const receiverEmails: string[] = ['profschingalo@gmail.com'];
+    const receiverEmails: string[] = [];
+    console.log('Users for timesheet emails:', users);
     for (const user of users) {
       const userFileName = new ExcelUtil(
         `[${user.username}]Timesheet`,
@@ -47,6 +48,7 @@ export class EmailProcess {
         receiverEmails.push(user.email);
       }
     }
+    console.log('Receiver Emails:', receiverEmails);
     const subject = `[${moment().format(
       'MMMM YYYY'
     )}] Monthly Timesheets from ClickUp System`;
