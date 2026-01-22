@@ -1,4 +1,4 @@
-import { filter, first, keys } from 'lodash';
+import { filter, first, isEmpty, keys } from 'lodash';
 import { ApiProjectTaskModel } from '../models';
 import { AppUtil, ReportUtil } from '.';
 import { TASK_CLOSED_STATUS } from '../constants';
@@ -81,7 +81,7 @@ export class AppProcessUtil {
         item4: ``
       }
     );
-    return summaryJson;
+    return isEmpty(tasks) ? []:  summaryJson;
   }
 
   static dqaSummary(workingDays: number, allTasks: ApiProjectTaskModel[]) {
