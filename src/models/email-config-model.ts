@@ -3,4 +3,5 @@ export interface EmailConfigModel {
   senderEmail: string;
   password: string;
   adminEmails: string[];
+  managementEmails: string[];
 }

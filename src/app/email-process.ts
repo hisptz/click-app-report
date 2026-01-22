@@ -65,7 +65,7 @@ export class EmailProcess {
     await new EmailNotificationUtil().sendEmail(
       subject,
       receiverEmails,
-      emailConfig.adminEmails,
+      emailConfig.managementEmails,
       htmlMessage,
       fileNames,
       fileDir
