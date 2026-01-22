@@ -13,5 +13,5 @@ export const emailConfig: EmailConfigModel = {
   senderEmail: '',
   password: '',
   adminEmails: [], // emails adresses to admin reports send the report
-  managementEmails: [], // email addresses to management reports send the report
+  managementEmails: [] // email addresses to management reports send the report
 };
