@@ -69,7 +69,19 @@ export class AppProcessUtil {
         item4: ``
       },
       {
-        item1: `Approved By:`,
+        item1: `Reviewed By (PM):`,
+        item2: ``,
+        item3: ``,
+        item4: ``
+      },
+      {
+        item1: ``,
+        item2: ``,
+        item3: `I have reviewed this time sheet and certify that it is accurate and complete to the best of my knowledge`,
+        item4: ``
+      },
+      {
+        item1: `Approved By (PD):`,
         item2: ``,
         item3: ``,
         item4: ``
